@@ -1,0 +1,71 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <style name="Theme.Stagemon" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <!-- ТВОИ ЦВЕТА -->
+        <item name="android:colorAccent">#FFFFFF</item>
+        <item name="colorAccent">#FFFFFF</item>
+        <item name="colorPrimary">#FFFFFF</item>
+        <item name="colorSecondary">#FFFFFF</item>
+
+        <!-- СТАТУС-БАР -->
+        <item name="android:statusBarColor">#FF000000</item>
+        <item name="android:navigationBarColor">#FF000000</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:colorPrimaryDark">#FF000000</item>
+
+        <!-- ========== ГЛОБАЛЬНЫЙ ШРИФТ ДЛЯ ВСЕГО ========== -->
+        <item name="android:fontFamily">@font/myfont</item>
+        <item name="fontFamily">@font/myfont</item>
+
+        <!-- Стили для всех типов текста -->
+        <item name="android:textViewStyle">@style/GlobalTextStyle</item>
+        <item name="android:buttonStyle">@style/GlobalButtonStyle</item>
+        <item name="android:editTextStyle">@style/GlobalTextStyle</item>
+        <item name="android:radioButtonStyle">@style/GlobalTextStyle</item>
+        <item name="android:checkboxStyle">@style/GlobalTextStyle</item>
+
+        <!-- Тема для диалогов -->
+        <item name="android:alertDialogTheme">@style/GlobalDialogTheme</item>
+
+        <!-- Тема для всплывающих окон -->
+        <item name="android:popupMenuStyle">@style/GlobalTextStyle</item>
+        <item name="android:dropDownListViewStyle">@style/GlobalTextStyle</item>
+    </style>
+
+    <!-- Базовый стиль для всего текста -->
+    <style name="GlobalTextStyle" parent="Widget.AppCompat.TextView">
+        <item name="android:fontFamily">@font/myfont</item>
+        <item name="fontFamily">@font/myfont</item>
+        <item name="android:textColor">#FFFFFF</item>
+    </style>
+
+    <!-- Стиль для кнопок -->
+    <style name="GlobalButtonStyle" parent="Widget.MaterialComponents.Button">
+        <item name="android:fontFamily">@font/myfont</item>
+        <item name="fontFamily">@font/myfont</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textColor">#000000</item>
+    </style>
+
+    <!-- Стиль для диалогов -->
+    <style name="GlobalDialogTheme" parent="Theme.MaterialComponents.Light.Dialog">
+        <item name="android:fontFamily">@font/myfont</item>
+        <item name="fontFamily">@font/myfont</item>
+        <item name="android:textViewStyle">@style/GlobalTextStyle</item>
+        <item name="android:buttonStyle">@style/GlobalButtonStyle</item>
+        <item name="android:editTextStyle">@style/GlobalTextStyle</item>
+        <item name="android:radioButtonStyle">@style/GlobalTextStyle</item>
+        <item name="android:checkboxStyle">@style/GlobalTextStyle</item>
+    </style>
+
+    <style name="Theme.Stagemon.Settings" parent="Theme.Stagemon">
+        <!-- Убираем заголовок активности -->
+        <item name="android:windowNoTitle">true</item>
+        <!-- Делаем прозрачный фон -->
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <!-- Убираем серую полосу сверху -->
+        <item name="android:windowContentOverlay">@null</item>
+        <!-- Затемняем фон (как у диалога) -->
+        <item name="android:backgroundDimEnabled">true</item>
+        <item name="android:backgroundDimAmount">0.6</item>
+    </style>
+</resources>

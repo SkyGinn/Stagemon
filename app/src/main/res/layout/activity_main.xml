@@ -1,0 +1,2442 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#000000"
+    tools:context=".MainActivity">
+
+    <!-- Твой оригинальный ConstraintLayout (ВЕСЬ ТВОЙ ЭКРАН) -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/main"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#000000">
+
+
+    <!-- Lottie фон -->
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/backgroundAnimation"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:alpha="0.3"
+        android:scaleType="centerCrop"
+        app:lottie_autoPlay="false"
+        app:lottie_loop="true"
+        app:lottie_rawRes="@raw/music_waves" />
+
+    <TextView
+        android:id="@+id/tvCountdown"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:textSize="100sp"
+        android:textColor="@android:color/white"
+        android:textStyle="bold"
+        android:visibility="gone"
+        android:background="#99000000"
+        android:elevation="10dp"
+        android:layout_centerInParent="true"
+        app:fontFamily="@font/myfont" />
+
+    <!-- ========== ВЕРХНЯЯ ПАНЕЛЬ ========== -->
+
+    <!-- Название Песни слева -->
+    <!-- ========== ВЕРХНЯЯ ПАНЕЛЬ ========== -->
+    <FrameLayout
+        android:id="@+id/pairNameContainer"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/bg_rounded_small"
+        android:gravity="center"
+        app:layout_constraintEnd_toEndOf="@+id/leftDeckContainer"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <!-- Горизонтальный LinearLayout внутри FrameLayout -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:padding="8dp">
+
+            <!-- Номер (НЕ крутится) -->
+            <TextView
+                android:id="@+id/currentPairNumber"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="1."
+                android:textColor="#FFFFFF"
+                android:textSize="18sp"
+                app:fontFamily="@font/myfont" />
+
+            <!-- Название (крутится) -->
+            <com.example.stagemon.MarqueeTextView
+                android:id="@+id/currentPairName"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="4dp"
+                android:singleLine="true"
+                android:ellipsize="marquee"
+                android:marqueeRepeatLimit="marquee_forever"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:scrollHorizontally="true"
+                android:requiresFadingEdge="horizontal"
+                android:fadingEdgeLength="20dp"
+                android:text="Song"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp"
+                app:fontFamily="@font/myfont" />
+
+        </LinearLayout>
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/tvNowPlaying"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="0dp"
+        android:text="Standby:"
+        android:textColor="#888888"
+        android:textSize="12sp"
+        app:fontFamily="@font/myfont"
+        app:layout_constraintBottom_toTopOf="@+id/pairNameContainer"
+        app:layout_constraintStart_toStartOf="@+id/pairNameContainer"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <FrameLayout
+        android:id="@+id/playlistNameContainer"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_weight="1"
+        android:background="@drawable/bg_rounded_small"
+        android:gravity="center"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/rightDeckContainer"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <com.example.stagemon.MarqueeTextView
+            android:id="@+id/currentPlaylistName"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:singleLine="true"
+            android:ellipsize="marquee"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:scrollHorizontally="true"
+            android:requiresFadingEdge="horizontal"
+            android:fadingEdgeLength="10dp"
+            android:gravity="center_vertical"
+            android:padding="8dp"
+            android:text="TrackList"
+            android:textColor="#FFFFFF"
+            android:textSize="18sp"
+            app:fontFamily="@font/myfont" />
+    </FrameLayout>
+    <TextView
+        android:id="@+id/tvLoadedPlaylist"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Tracklist:"
+        android:textColor="#888888"
+        android:textSize="12sp"
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="4dp"
+        app:layout_constraintBottom_toTopOf="@+id/playlistNameContainer"
+        app:layout_constraintStart_toStartOf="@+id/playlistNameContainer"
+        app:layout_constraintTop_toTopOf="parent"
+        app:fontFamily="@font/myfont" />
+
+    <!-- ========== ЛЕВАЯ ДЕКА ========== -->
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/leftDeckContainer"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        app:cardCornerRadius="12dp"
+        app:layout_constraintBottom_toTopOf="@+id/leftControls"
+        app:layout_constraintEnd_toStartOf="@+id/vuFohContainer"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/pairNameContainer">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/leftDeckList"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#ffffff"
+            android:scrollbars="none"
+            android:layout_margin="0dp"
+            android:padding="0dp" />
+    </com.google.android.material.card.MaterialCardView>
+
+    <!-- ========== VU-МЕТР FOH (ЛЕВЫЙ СТЕРЕО ВЫХОД) ========== -->
+    <LinearLayout
+        android:id="@+id/vuFohContainer"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_marginEnd="4dp"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:paddingHorizontal="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/centerPanel"
+        app:layout_constraintStart_toEndOf="@+id/leftDeckContainer"
+        app:layout_constraintTop_toTopOf="@+id/tvNowPlaying">
+
+        <!-- ЗАГОЛОВОК "L   dB   R" -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="0dp"
+            android:text="L   dB   R"
+            android:textColor="#888888"
+            android:textSize="11sp"
+            app:fontFamily="@font/myfont" />
+
+        <!-- КОНТЕЙНЕР ПОЛОСОК -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:padding="2dp">
+
+            <!-- ЛЕВЫЙ КАНАЛ (30 СЕГМЕНТОВ) -->
+            <LinearLayout
+                android:id="@+id/vuFohLeftContainer"
+                android:layout_width="10dp"
+                android:layout_height="match_parent"
+                android:gravity="top"
+                android:orientation="vertical">
+
+                <!-- СЕГМЕНТ 0 (+3dB) - САМЫЙ ВЕРХ -->
+                <View
+                    android:id="@+id/vuFohLeftSeg0"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="1dp"
+                    android:layout_weight="1"
+                    android:background="#FF111111" />
+
+                <!-- СЕГМЕНТ 1 (+2.7dB) -->
+                <View
+                    android:id="@+id/vuFohLeftSeg1"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="1dp"
+                    android:layout_weight="1"
+                    android:background="#FF111111" />
+
+                <!-- СЕГМЕНТ 2 (+2.4dB) -->
+                <View
+                    android:id="@+id/vuFohLeftSeg2"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="1dp"
+                    android:layout_weight="1"
+                    android:background="#FF111111" />
+
+                <!-- СЕГМЕНТ 3 (+2.1dB) -->
+                <View
+                    android:id="@+id/vuFohLeftSeg3"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="1dp"
+                    android:layout_weight="1"
+                    android:background="#FF111111" />
+
+                <!-- СЕГМЕНТ 4 (+1.8dB) -->
+                <View
+                    android:id="@+id/vuFohLeftSeg4"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="1dp"
+                    android:layout_weight="1"
+                    android:background="#FF111111" />
+
+                <!-- СЕГМЕНТ 5 (+1.5dB) -->
+                <View
+                    android:id="@+id/vuFohLeftSeg5"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="1dp"
+                    android:layout_weight="1"
+                    android:background="#FF111111" />
+
+                <!-- СЕГМЕНТ 6 (+1.2dB) -->
+                <View
+                    android:id="@+id/vuFohLeftSeg6"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="1dp"
+                    android:layout_weight="1"
+                    android:background="#FF111111" />
+
+                <!-- СЕГМЕНТ 7 (+0.9dB) -->
+                <View
+                    android:id="@+id/vuFohLeftSeg7"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="1dp"
+                    android:layout_weight="1"
+                    android:background="#FF111111" />
+
+                <!-- СЕГМЕНТ 8 (+0.6dB) -->
+                <View
+                    android:id="@+id/vuFohLeftSeg8"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="1dp"
+                    android:layout_weight="1"
+                    android:background="#FF111111" />
+
+                <!-- СЕГМЕНТ 9 (+0.3dB) -->
+                <View
+                    android:id="@+id/vuFohLeftSeg9"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="1dp"
+                    android:layout_weight="1"
+                    android:background="#FF111111" />
+
+                <!-- СЕГМЕНТ 10 (0dB) -->
+                <View
+                    android:id="@+id/vuFohLeftSeg10"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="1dp"
+                    android:layout_weight="1"
+                    android:background="#FF111111" />
+
+                <!-- СЕГМЕНТ 11 (-0.3dB) -->
+                <View
+                    android:id="@+id/vuFohLeftSeg11"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="1dp"
+                    android:layout_weight="1"
+                    android:background="#FF111111" />
+
+                <!-- СЕГМЕНТ 12 (-0.6dB) -->
+                <View
+                    android:id="@+id/vuFohLeftSeg12"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="1dp"
+                    android:layout_weight="1"
+                    android:background="#FF111111" />
+
+                <!-- СЕГМЕНТ 13 (-0.9dB) -->
+                <View
+                    android:id="@+id/vuFohLeftSeg13"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="1dp"
+                    android:layout_weight="1"
+                    android:background="#FF111111" />
+
+                <!-- СЕГМЕНТ 14 (-1.2dB) -->
+                <View
+                    android:id="@+id/vuFohLeftSeg14"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="1dp"
+                    android:layout_weight="1"
+                    android:background="#FF111111" />
+
+                <!-- СЕГМЕНТ 15 (-1.5dB) -->
+                <View
+                    android:id="@+id/vuFohLeftSeg15"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="1dp"
+                    android:layout_weight="1"
+                    android:background="#FF111111" />
+
+                <!-- СЕГМЕНТ 16 (-1.8dB) -->
+                <View
+                    android:id="@+id/vuFohLeftSeg16"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="1dp"
+                    android:layout_weight="1"
+                    android:background="#FF111111" />
+
+                <!-- СЕГМЕНТ 17 (-2.1dB) -->
+                <View
+                    android:id="@+id/vuFohLeftSeg17"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="1dp"
+                    android:layout_weight="1"
+                    android:background="#FF111111" />
+
+                <!-- СЕГМЕНТ 18 (-2.4dB) -->
+                <View
+                    android:id="@+id/vuFohLeftSeg18"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="1dp"
+                    android:layout_weight="1"
+                    android:background="#FF111111" />
+
+                <!-- СЕГМЕНТ 19 (-2.7dB) -->
+                <View
+                    android:id="@+id/vuFohLeftSeg19"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="1dp"
+                    android:layout_weight="1"
+                    android:background="#FF111111" />
+
+                <!-- СЕГМЕНТ 20 (-3dB) -->
+                <View
+                    android:id="@+id/vuFohLeftSeg20"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="1dp"
+                    android:layout_weight="1"
+                    android:background="#FF111111" />
+
+                <!-- СЕГМЕНТ 21 (-4dB) -->
+                <View
+                    android:id="@+id/vuFohLeftSeg21"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="1dp"
+                    android:layout_weight="1"
+                    android:background="#FF111111" />
+
+                <!-- СЕГМЕНТ 22 (-5dB) -->
+                <View
+                    android:id="@+id/vuFohLeftSeg22"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="1dp"
+                    android:layout_weight="1"
+                    android:background="#FF111111" />
+
+                <!-- СЕГМЕНТ 23 (-6dB) -->
+                <View
+                    android:id="@+id/vuFohLeftSeg23"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="1dp"
+                    android:layout_weight="1"
+                    android:background="#FF111111" />
+
+                <!-- СЕГМЕНТ 24 (-8dB) -->
+                <View
+                    android:id="@+id/vuFohLeftSeg24"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="1dp"
+                    android:layout_weight="1"
+                    android:background="#FF111111" />
+
+                <!-- СЕГМЕНТ 25 (-10dB) -->
+                <View
+                    android:id="@+id/vuFohLeftSeg25"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="1dp"
+                    android:layout_weight="1"
+                    android:background="#FF111111" />
+
+                <!-- СЕГМЕНТ 26 (-12dB) -->
+                <View
+                    android:id="@+id/vuFohLeftSeg26"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="1dp"
+                    android:layout_weight="1"
+                    android:background="#FF111111" />
+
+                <!-- СЕГМЕНТ 27 (-14dB) -->
+                <View
+                    android:id="@+id/vuFohLeftSeg27"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="1dp"
+                    android:layout_weight="1"
+                    android:background="#FF111111" />
+
+                <!-- СЕГМЕНТ 28 (-16dB) -->
+                <View
+                    android:id="@+id/vuFohLeftSeg28"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="1dp"
+                    android:layout_weight="1"
+                    android:background="#FF111111" />
+
+                <!-- СЕГМЕНТ 29 (-20dB) - САМЫЙ НИЗ, БЕЗ ОТСТУПА -->
+                <View
+                    android:id="@+id/vuFohLeftSeg29"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:background="#FF111111" />
+            </LinearLayout>
+
+            <!-- ЦИФРЫ dB МЕЖДУ КАНАЛАМИ (ПОД НОВЫЕ ГРАДАЦИИ) -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginHorizontal="4dp"
+                android:gravity="top|end"
+                android:orientation="vertical">
+
+                <!-- КРАСНАЯ ЗОНА (8 сегментов: +6 до -1) -->
+                <TextView
+                    android:id="@+id/vuFohDbText0"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="+6"
+                    android:textColor="#888888"
+                    android:textSize="9sp"
+                    app:fontFamily="@font/myfont" />
+
+
+                <TextView
+                    android:id="@+id/vuFohDbText3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="+3"
+                    android:textColor="#888888"
+                    android:textSize="9sp"
+                    app:fontFamily="@font/myfont" />
+
+
+                <TextView
+                    android:id="@+id/vuFohDbText6"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="0"
+                    android:textColor="#888888"
+                    android:textSize="9sp"
+                    app:fontFamily="@font/myfont" />
+
+                <TextView
+                    android:id="@+id/vuFohDbText7"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="-1"
+                    android:textColor="#888888"
+                    android:textSize="9sp"
+                    app:fontFamily="@font/myfont" />
+
+                <TextView
+                    android:id="@+id/vuFohDbText9"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="-3"
+                    android:textColor="#888888"
+                    android:textSize="9sp"
+                    app:fontFamily="@font/myfont" />
+
+
+                <TextView
+                    android:id="@+id/vuFohDbText12"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="-6"
+                    android:textColor="#888888"
+                    android:textSize="9sp"
+                    app:fontFamily="@font/myfont" />
+
+
+                <TextView
+                    android:id="@+id/vuFohDbText15"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="-9"
+                    android:textColor="#888888"
+                    android:textSize="9sp"
+                    app:fontFamily="@font/myfont" />
+
+
+                <TextView
+                    android:id="@+id/vuFohDbText18"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="-12"
+                    android:textColor="#888888"
+                    android:textSize="9sp"
+                    app:fontFamily="@font/myfont" />
+
+
+                <TextView
+                    android:id="@+id/vuFohDbText22"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="-16"
+                    android:textColor="#888888"
+                    android:textSize="9sp"
+                    app:fontFamily="@font/myfont" />
+
+                <TextView
+                    android:id="@+id/vuFohDbText26"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="-20"
+                    android:textColor="#888888"
+                    android:textSize="9sp"
+                    app:fontFamily="@font/myfont" />
+
+
+                <TextView
+                    android:id="@+id/vuFohDbText28"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="-25"
+                    android:textColor="#888888"
+                    android:textSize="9sp"
+                    app:fontFamily="@font/myfont" />
+
+                <TextView
+                    android:id="@+id/vuFohDbText29"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="-30"
+                    android:textColor="#888888"
+                    android:textSize="9sp"
+                    app:fontFamily="@font/myfont" />
+            </LinearLayout>
+
+
+            <!-- ПРАВЫЙ КАНАЛ (30 СЕГМЕНТОВ) -->
+            <LinearLayout
+                android:id="@+id/vuFohRightContainer"
+                android:layout_width="10dp"
+                android:layout_height="match_parent"
+                android:gravity="top"
+                android:orientation="vertical">
+
+                <!-- СЕГМЕНТ 0 (+3dB) - САМЫЙ ВЕРХ -->
+                <View
+                    android:id="@+id/vuFohRightSeg0"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="1dp"
+                    android:layout_weight="1"
+                    android:background="#FF111111" />
+
+                <!-- СЕГМЕНТ 1 (+2.7dB) -->
+                <View
+                    android:id="@+id/vuFohRightSeg1"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="1dp"
+                    android:layout_weight="1"
+                    android:background="#FF111111" />
+
+                <!-- СЕГМЕНТ 2 (+2.4dB) -->
+                <View
+                    android:id="@+id/vuFohRightSeg2"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="1dp"
+                    android:layout_weight="1"
+                    android:background="#FF111111" />
+
+                <!-- СЕГМЕНТ 3 (+2.1dB) -->
+                <View
+                    android:id="@+id/vuFohRightSeg3"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="1dp"
+                    android:layout_weight="1"
+                    android:background="#FF111111" />
+
+                <!-- СЕГМЕНТ 4 (+1.8dB) -->
+                <View
+                    android:id="@+id/vuFohRightSeg4"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="1dp"
+                    android:layout_weight="1"
+                    android:background="#FF111111" />
+
+                <!-- СЕГМЕНТ 5 (+1.5dB) -->
+                <View
+                    android:id="@+id/vuFohRightSeg5"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="1dp"
+                    android:layout_weight="1"
+                    android:background="#FF111111" />
+
+                <!-- СЕГМЕНТ 6 (+1.2dB) -->
+                <View
+                    android:id="@+id/vuFohRightSeg6"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="1dp"
+                    android:layout_weight="1"
+                    android:background="#FF111111" />
+
+                <!-- СЕГМЕНТ 7 (+0.9dB) -->
+                <View
+                    android:id="@+id/vuFohRightSeg7"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="1dp"
+                    android:layout_weight="1"
+                    android:background="#FF111111" />
+
+                <!-- СЕГМЕНТ 8 (+0.6dB) -->
+                <View
+                    android:id="@+id/vuFohRightSeg8"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="1dp"
+                    android:layout_weight="1"
+                    android:background="#FF111111" />
+
+                <!-- СЕГМЕНТ 9 (+0.3dB) -->
+                <View
+                    android:id="@+id/vuFohRightSeg9"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="1dp"
+                    android:layout_weight="1"
+                    android:background="#FF111111" />
+
+                <!-- СЕГМЕНТ 10 (0dB) -->
+                <View
+                    android:id="@+id/vuFohRightSeg10"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="1dp"
+                    android:layout_weight="1"
+                    android:background="#FF111111" />
+
+                <!-- СЕГМЕНТ 11 (-0.3dB) -->
+                <View
+                    android:id="@+id/vuFohRightSeg11"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="1dp"
+                    android:layout_weight="1"
+                    android:background="#FF111111" />
+
+                <!-- СЕГМЕНТ 12 (-0.6dB) -->
+                <View
+                    android:id="@+id/vuFohRightSeg12"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="1dp"
+                    android:layout_weight="1"
+                    android:background="#FF111111" />
+
+                <!-- СЕГМЕНТ 13 (-0.9dB) -->
+                <View
+                    android:id="@+id/vuFohRightSeg13"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="1dp"
+                    android:layout_weight="1"
+                    android:background="#FF111111" />
+
+                <!-- СЕГМЕНТ 14 (-1.2dB) -->
+                <View
+                    android:id="@+id/vuFohRightSeg14"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="1dp"
+                    android:layout_weight="1"
+                    android:background="#FF111111" />
+
+                <!-- СЕГМЕНТ 15 (-1.5dB) -->
+                <View
+                    android:id="@+id/vuFohRightSeg15"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="1dp"
+                    android:layout_weight="1"
+                    android:background="#FF111111" />
+
+                <!-- СЕГМЕНТ 16 (-1.8dB) -->
+                <View
+                    android:id="@+id/vuFohRightSeg16"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="1dp"
+                    android:layout_weight="1"
+                    android:background="#FF111111" />
+
+                <!-- СЕГМЕНТ 17 (-2.1dB) -->
+                <View
+                    android:id="@+id/vuFohRightSeg17"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="1dp"
+                    android:layout_weight="1"
+                    android:background="#FF111111" />
+
+                <!-- СЕГМЕНТ 18 (-2.4dB) -->
+                <View
+                    android:id="@+id/vuFohRightSeg18"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="1dp"
+                    android:layout_weight="1"
+                    android:background="#FF111111" />
+
+                <!-- СЕГМЕНТ 19 (-2.7dB) -->
+                <View
+                    android:id="@+id/vuFohRightSeg19"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="1dp"
+                    android:layout_weight="1"
+                    android:background="#FF111111" />
+
+                <!-- СЕГМЕНТ 20 (-3dB) -->
+                <View
+                    android:id="@+id/vuFohRightSeg20"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="1dp"
+                    android:layout_weight="1"
+                    android:background="#FF111111" />
+
+                <!-- СЕГМЕНТ 21 (-4dB) -->
+                <View
+                    android:id="@+id/vuFohRightSeg21"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="1dp"
+                    android:layout_weight="1"
+                    android:background="#FF111111" />
+
+                <!-- СЕГМЕНТ 22 (-5dB) -->
+                <View
+                    android:id="@+id/vuFohRightSeg22"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="1dp"
+                    android:layout_weight="1"
+                    android:background="#FF111111" />
+
+                <!-- СЕГМЕНТ 23 (-6dB) -->
+                <View
+                    android:id="@+id/vuFohRightSeg23"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="1dp"
+                    android:layout_weight="1"
+                    android:background="#FF111111" />
+
+                <!-- СЕГМЕНТ 24 (-8dB) -->
+                <View
+                    android:id="@+id/vuFohRightSeg24"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="1dp"
+                    android:layout_weight="1"
+                    android:background="#FF111111" />
+
+                <!-- СЕГМЕНТ 25 (-10dB) -->
+                <View
+                    android:id="@+id/vuFohRightSeg25"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="1dp"
+                    android:layout_weight="1"
+                    android:background="#FF111111" />
+
+                <!-- СЕГМЕНТ 26 (-12dB) -->
+                <View
+                    android:id="@+id/vuFohRightSeg26"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="1dp"
+                    android:layout_weight="1"
+                    android:background="#FF111111" />
+
+                <!-- СЕГМЕНТ 27 (-14dB) -->
+                <View
+                    android:id="@+id/vuFohRightSeg27"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="1dp"
+                    android:layout_weight="1"
+                    android:background="#FF111111" />
+
+                <!-- СЕГМЕНТ 28 (-16dB) -->
+                <View
+                    android:id="@+id/vuFohRightSeg28"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="1dp"
+                    android:layout_weight="1"
+                    android:background="#FF111111" />
+
+                <!-- СЕГМЕНТ 29 (-20dB) - САМЫЙ НИЗ, БЕЗ ОТСТУПА -->
+                <View
+                    android:id="@+id/vuFohRightSeg29"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:background="#FF111111" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- ========== ЦЕНТРАЛЬНАЯ ПАНЕЛЬ ========== -->
+
+    <View
+        android:id="@+id/fakeWaveformSpace"
+        android:layout_width="260dp"
+        android:layout_height="60dp"
+        android:layout_marginTop="2dp"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toStartOf="@+id/vuMonContainer"
+        app:layout_constraintStart_toEndOf="@+id/vuFohContainer"
+        app:layout_constraintTop_toTopOf="parent" />
+
+        <com.example.stagemon.DualWaveformView
+            android:id="@+id/dualWaveform"
+            android:layout_width="260dp"
+            android:layout_height="60dp"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="6dp"
+            android:paddingHorizontal="4dp"
+            app:layout_constraintBottom_toTopOf="@+id/centerPanel"
+            app:layout_constraintEnd_toStartOf="@+id/vuMonContainer"
+
+            app:layout_constraintStart_toEndOf="@+id/vuFohContainer"
+            app:layout_constraintTop_toTopOf="parent"
+             />
+
+        <LinearLayout
+        android:id="@+id/centerPanel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="4dp"
+        android:paddingHorizontal="0dp"
+        android:gravity="center"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/vuMonContainer"
+        app:layout_constraintStart_toEndOf="@+id/vuFohContainer"
+        app:layout_constraintTop_toBottomOf="@+id/fakeWaveformSpace">
+
+
+        <!-- Flow — USB — Menu -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="0dp"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/flowButton"
+                android:layout_width="96dp"
+                android:layout_height="44dp"
+                android:backgroundTint="#ffffff"
+                android:text="Flow"
+                android:textColor="#000000"
+                android:textSize="15sp"
+                app:cornerRadius="30dp"
+                app:fontFamily="@font/myfont" />
+
+            <TextView
+                android:id="@+id/usbStatus"
+                android:layout_width="55dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="6dp"
+                android:layout_marginEnd="6dp"
+                android:background="#40000000"
+                android:gravity="center"
+                android:paddingHorizontal="10dp"
+                android:paddingVertical="6dp"
+                android:text="USB\nOFF"
+                android:textAlignment="center"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                app:fontFamily="@font/myfont" />
+
+            <Button
+                android:id="@+id/btnPlaybackMode"
+                android:layout_width="96dp"
+                android:layout_height="44dp"
+                android:backgroundTint="#ffffff"
+                android:drawableTop="@drawable/ic_repeat_one"
+                android:gravity="center_horizontal|top"
+                android:padding="4dp"
+                android:text=""
+                app:tint="#000000"
+                android:textColor="#000000"
+                android:textSize="15sp"
+                app:cornerRadius="30dp"
+                app:fontFamily="@font/myfont" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:layout_marginBottom="0dp"
+            android:gravity="center"
+            android:insetLeft="0dp"
+            android:insetTop="0dp"
+            android:insetRight="0dp"
+            android:insetBottom="0dp"
+            android:minWidth="0dp"
+            android:minHeight="0dp"
+            android:orientation="horizontal">
+
+            <!-- Правая кнопка -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnTimeScreen"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_marginStart="0dp"
+                android:layout_marginEnd="0dp"
+                android:layout_marginBottom="0dp"
+                android:backgroundTint="#FF333333"
+                android:gravity="center"
+                android:insetLeft="0dp"
+                android:insetTop="0dp"
+                android:insetRight="0dp"
+                android:insetBottom="0dp"
+                android:minWidth="0dp"
+                android:minHeight="0dp"
+                android:text="TS"
+                android:textColor="#FFFFFF"
+                android:textSize="8sp"
+                android:textStyle="bold"
+                app:cornerRadius="80dp"
+
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <ImageButton
+                android:id="@+id/prevPair"
+                android:layout_width="110dp"
+                android:layout_height="65dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:backgroundTint="#ffffff"
+                android:src="@drawable/ic_arrow_up"
+                app:iconSize="60dp"
+                android:scaleType="fitCenter"
+                android:tint="@null"
+                android:background="@drawable/bg_rounded_white"
+                android:minWidth="0dp"
+                android:minHeight="0dp"
+                app:cornerRadius="90dp"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                android:layout_gravity="center"
+                app:layout_constraintEnd_toStartOf="@+id/btnWaveRight"
+                app:layout_constraintStart_toEndOf="@+id/btnWaveLeft" />
+
+            <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnHelp"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_marginEnd="0dp"
+            android:layout_marginStart="0dp"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:insetLeft="0dp"
+            android:insetRight="0dp"
+            android:minWidth="0dp"
+            android:minHeight="0dp"
+            android:backgroundTint="#FF333333"
+            android:text="HELP"
+            android:textColor="#FFFFFF"
+            android:textSize="8sp"
+            android:textStyle="bold"
+            app:cornerRadius="80dp"
+            android:gravity="center"
+            app:layout_constraintEnd_toEndOf="parent"/>
+    </LinearLayout>
+
+        <Button
+            android:id="@+id/playStop"
+            android:layout_width="match_parent"
+            android:layout_height="65dp"
+            android:layout_marginBottom="0dp"
+            android:backgroundTint="#ffffff"
+            android:text="PLAY"
+            android:textColor="#000000"
+            android:textSize="40sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            app:cornerRadius="35dp"
+            app:fontFamily="@font/myfont" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:layout_marginBottom="0dp"
+            android:gravity="center"
+            android:insetLeft="0dp"
+            android:insetTop="0dp"
+            android:insetRight="0dp"
+            android:insetBottom="0dp"
+            android:minWidth="0dp"
+            android:minHeight="0dp"
+            android:orientation="horizontal">
+        <TextView
+            android:id="@+id/tvSongTempo"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_marginStart="0dp"
+            android:layout_marginEnd="0dp"
+            android:layout_marginBottom="0dp"
+            android:backgroundTint="#FF333333"
+            android:gravity="center"
+            android:insetLeft="0dp"
+            android:insetTop="0dp"
+            android:insetRight="0dp"
+            android:insetBottom="0dp"
+            android:minWidth="0dp"
+            android:text="--- bpm"
+            android:textColor="#FFFFFF"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:background="@drawable/bg_rounded_small"
+            android:maxLines="2"
+            android:minHeight="44dp"
+            app:cornerRadius="80dp"
+            app:fontFamily="@font/myfont" />
+        <ImageButton
+            android:id="@+id/nextPair"
+            android:layout_width="110dp"
+            android:layout_height="65dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:backgroundTint="#ffffff"
+            android:src="@drawable/ic_arrow_down"
+            app:iconSize="80dp"
+            android:scaleType="fitCenter"
+            android:background="@drawable/bg_rounded_white"
+            android:minWidth="0dp"
+            android:minHeight="0dp"
+            app:cornerRadius="90dp"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            app:layout_constraintEnd_toStartOf="@+id/btnWaveRight"
+            app:layout_constraintStart_toEndOf="@+id/btnWaveLeft" />
+            <!-- ТЕКСТ СПРАВА: Режим метронома (отцентрован) -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnStageView"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_marginStart="0dp"
+                android:layout_marginEnd="0dp"
+                android:layout_marginBottom="0dp"
+                android:backgroundTint="#FF333333"
+                android:gravity="center"
+                android:insetLeft="0dp"
+                android:insetTop="0dp"
+                android:insetRight="0dp"
+                android:insetBottom="0dp"
+                android:minWidth="0dp"
+                android:text="Stage\nView"
+                android:textColor="#FFFFFF"
+                android:textSize="8sp"
+                android:textStyle="bold"
+                android:maxLines="2"
+                android:singleLine="false"
+                android:minHeight="44dp"
+                app:cornerRadius="15dp"
+                app:fontFamily="@font/myfont" />
+        </LinearLayout>
+
+
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="10dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/volumeMetrLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="0dp"
+                    android:gravity="end"
+                    android:text="Metr"
+                    android:textColor="#FFFFFF"
+                    android:textSize="14sp"
+                    app:fontFamily="@font/myfont" />
+                <SeekBar
+                    android:id="@+id/volumeMetr"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="0dp"
+                    android:layout_weight="1"
+                    android:gravity="start"
+                    android:max="100"
+                    android:paddingStart="10dp"
+                    android:paddingEnd="16dp"
+                    android:progress="100"
+                    android:progressTint="#ffffff" />
+
+                <TextView
+                    android:id="@+id/volumeMetrText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="0dp"
+                    android:layout_marginEnd="10dp"
+                    android:gravity="end"
+                    android:text="100%"
+                    android:textColor="#FFFFFF"
+                    android:textSize="14sp"
+                    app:fontFamily="@font/myfont" />
+            </LinearLayout>
+
+    </LinearLayout>
+
+
+    <!-- ========== VU-МЕТР MON (ПРАВЫЙ СТЕРЕО ВЫХОД) ========== -->
+    <LinearLayout
+        android:id="@+id/vuMonContainer"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_marginStart="4dp"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:paddingHorizontal="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/rightDeckContainer"
+        app:layout_constraintStart_toEndOf="@+id/centerPanel"
+        app:layout_constraintTop_toTopOf="@+id/tvLoadedPlaylist">
+
+        <!-- ЗАГОЛОВОК "L   dB   R" -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="0dp"
+            android:text="L   dB   R"
+            android:textColor="#888888"
+            android:textSize="11sp"
+            app:fontFamily="@font/myfont" />
+
+        <!-- КОНТЕЙНЕР ПОЛОСОК -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:padding="2dp">
+
+            <!-- ЛЕВЫЙ КАНАЛ (30 СЕГМЕНТОВ) -->
+            <LinearLayout
+                android:id="@+id/vuMonLeftContainer"
+                android:layout_width="10dp"
+                android:layout_height="match_parent"
+                android:gravity="top"
+                android:orientation="vertical">
+
+                <!-- СЕГМЕНТ 0 (+3dB) - САМЫЙ ВЕРХ -->
+                <View
+                    android:id="@+id/vuMonLeftSeg0"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="1dp"
+                    android:layout_weight="1"
+                    android:background="#FF111111" />
+
+                <!-- СЕГМЕНТ 1 (+2.7dB) -->
+                <View
+                    android:id="@+id/vuMonLeftSeg1"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="1dp"
+                    android:layout_weight="1"
+                    android:background="#FF111111" />
+
+                <!-- СЕГМЕНТ 2 (+2.4dB) -->
+                <View
+                    android:id="@+id/vuMonLeftSeg2"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="1dp"
+                    android:layout_weight="1"
+                    android:background="#FF111111" />
+
+                <!-- СЕГМЕНТ 3 (+2.1dB) -->
+                <View
+                    android:id="@+id/vuMonLeftSeg3"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="1dp"
+                    android:layout_weight="1"
+                    android:background="#FF111111" />
+
+                <!-- СЕГМЕНТ 4 (+1.8dB) -->
+                <View
+                    android:id="@+id/vuMonLeftSeg4"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="1dp"
+                    android:layout_weight="1"
+                    android:background="#FF111111" />
+
+                <!-- СЕГМЕНТ 5 (+1.5dB) -->
+                <View
+                    android:id="@+id/vuMonLeftSeg5"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="1dp"
+                    android:layout_weight="1"
+                    android:background="#FF111111" />
+
+                <!-- СЕГМЕНТ 6 (+1.2dB) -->
+                <View
+                    android:id="@+id/vuMonLeftSeg6"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="1dp"
+                    android:layout_weight="1"
+                    android:background="#FF111111" />
+
+                <!-- СЕГМЕНТ 7 (+0.9dB) -->
+                <View
+                    android:id="@+id/vuMonLeftSeg7"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="1dp"
+                    android:layout_weight="1"
+                    android:background="#FF111111" />
+
+                <!-- СЕГМЕНТ 8 (+0.6dB) -->
+                <View
+                    android:id="@+id/vuMonLeftSeg8"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="1dp"
+                    android:layout_weight="1"
+                    android:background="#FF111111" />
+
+                <!-- СЕГМЕНТ 9 (+0.3dB) -->
+                <View
+                    android:id="@+id/vuMonLeftSeg9"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="1dp"
+                    android:layout_weight="1"
+                    android:background="#FF111111" />
+
+                <!-- СЕГМЕНТ 10 (0dB) -->
+                <View
+                    android:id="@+id/vuMonLeftSeg10"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="1dp"
+                    android:layout_weight="1"
+                    android:background="#FF111111" />
+
+                <!-- СЕГМЕНТ 11 (-0.3dB) -->
+                <View
+                    android:id="@+id/vuMonLeftSeg11"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="1dp"
+                    android:layout_weight="1"
+                    android:background="#FF111111" />
+
+                <!-- СЕГМЕНТ 12 (-0.6dB) -->
+                <View
+                    android:id="@+id/vuMonLeftSeg12"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="1dp"
+                    android:layout_weight="1"
+                    android:background="#FF111111" />
+
+                <!-- СЕГМЕНТ 13 (-0.9dB) -->
+                <View
+                    android:id="@+id/vuMonLeftSeg13"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="1dp"
+                    android:layout_weight="1"
+                    android:background="#FF111111" />
+
+                <!-- СЕГМЕНТ 14 (-1.2dB) -->
+                <View
+                    android:id="@+id/vuMonLeftSeg14"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="1dp"
+                    android:layout_weight="1"
+                    android:background="#FF111111" />
+
+                <!-- СЕГМЕНТ 15 (-1.5dB) -->
+                <View
+                    android:id="@+id/vuMonLeftSeg15"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="1dp"
+                    android:layout_weight="1"
+                    android:background="#FF111111" />
+
+                <!-- СЕГМЕНТ 16 (-1.8dB) -->
+                <View
+                    android:id="@+id/vuMonLeftSeg16"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="1dp"
+                    android:layout_weight="1"
+                    android:background="#FF111111" />
+
+                <!-- СЕГМЕНТ 17 (-2.1dB) -->
+                <View
+                    android:id="@+id/vuMonLeftSeg17"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="1dp"
+                    android:layout_weight="1"
+                    android:background="#FF111111" />
+
+                <!-- СЕГМЕНТ 18 (-2.4dB) -->
+                <View
+                    android:id="@+id/vuMonLeftSeg18"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="1dp"
+                    android:layout_weight="1"
+                    android:background="#FF111111" />
+
+                <!-- СЕГМЕНТ 19 (-2.7dB) -->
+                <View
+                    android:id="@+id/vuMonLeftSeg19"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="1dp"
+                    android:layout_weight="1"
+                    android:background="#FF111111" />
+
+                <!-- СЕГМЕНТ 20 (-3dB) -->
+                <View
+                    android:id="@+id/vuMonLeftSeg20"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="1dp"
+                    android:layout_weight="1"
+                    android:background="#FF111111" />
+
+                <!-- СЕГМЕНТ 21 (-4dB) -->
+                <View
+                    android:id="@+id/vuMonLeftSeg21"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="1dp"
+                    android:layout_weight="1"
+                    android:background="#FF111111" />
+
+                <!-- СЕГМЕНТ 22 (-5dB) -->
+                <View
+                    android:id="@+id/vuMonLeftSeg22"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="1dp"
+                    android:layout_weight="1"
+                    android:background="#FF111111" />
+
+                <!-- СЕГМЕНТ 23 (-6dB) -->
+                <View
+                    android:id="@+id/vuMonLeftSeg23"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="1dp"
+                    android:layout_weight="1"
+                    android:background="#FF111111" />
+
+                <!-- СЕГМЕНТ 24 (-8dB) -->
+                <View
+                    android:id="@+id/vuMonLeftSeg24"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="1dp"
+                    android:layout_weight="1"
+                    android:background="#FF111111" />
+
+                <!-- СЕГМЕНТ 25 (-10dB) -->
+                <View
+                    android:id="@+id/vuMonLeftSeg25"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="1dp"
+                    android:layout_weight="1"
+                    android:background="#FF111111" />
+
+                <!-- СЕГМЕНТ 26 (-12dB) -->
+                <View
+                    android:id="@+id/vuMonLeftSeg26"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="1dp"
+                    android:layout_weight="1"
+                    android:background="#FF111111" />
+
+                <!-- СЕГМЕНТ 27 (-14dB) -->
+                <View
+                    android:id="@+id/vuMonLeftSeg27"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="1dp"
+                    android:layout_weight="1"
+                    android:background="#FF111111" />
+
+                <!-- СЕГМЕНТ 28 (-16dB) -->
+                <View
+                    android:id="@+id/vuMonLeftSeg28"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="1dp"
+                    android:layout_weight="1"
+                    android:background="#FF111111" />
+
+                <!-- СЕГМЕНТ 29 (-20dB) - САМЫЙ НИЗ, БЕЗ ОТСТУПА -->
+                <View
+                    android:id="@+id/vuMonLeftSeg29"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:background="#FF111111" />
+            </LinearLayout>
+
+            <!-- ЦИФРЫ dB МЕЖДУ КАНАЛАМИ (ПОД НОВЫЕ ГРАДАЦИИ) -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginHorizontal="4dp"
+                android:gravity="top|end"
+                android:orientation="vertical">
+
+                <!-- КРАСНАЯ ЗОНА (8 сегментов: +6 до -1) -->
+                <TextView
+                    android:id="@+id/vuMonDbText0"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="+6"
+                    android:textColor="#888888"
+                    android:textSize="9sp"
+                    app:fontFamily="@font/myfont" />
+
+
+                <TextView
+                    android:id="@+id/vuMonDbText3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="+3"
+                    android:textColor="#888888"
+                    android:textSize="9sp"
+                    app:fontFamily="@font/myfont" />
+
+
+                <TextView
+                    android:id="@+id/vuMonDbText6"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="0"
+                    android:textColor="#888888"
+                    android:textSize="9sp"
+                    app:fontFamily="@font/myfont" />
+
+                <TextView
+                    android:id="@+id/vuMonDbText7"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="-1"
+                    android:textColor="#888888"
+                    android:textSize="9sp"
+                    app:fontFamily="@font/myfont" />
+
+                <TextView
+                    android:id="@+id/vuMonDbText9"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="-3"
+                    android:textColor="#888888"
+                    android:textSize="9sp"
+                    app:fontFamily="@font/myfont" />
+
+
+                <TextView
+                    android:id="@+id/vuMonDbText12"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="-6"
+                    android:textColor="#888888"
+                    android:textSize="9sp"
+                    app:fontFamily="@font/myfont" />
+
+
+                <TextView
+                    android:id="@+id/vuMonDbText15"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="-9"
+                    android:textColor="#888888"
+                    android:textSize="9sp"
+                    app:fontFamily="@font/myfont" />
+
+
+                <TextView
+                    android:id="@+id/vuMonDbText18"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="-12"
+                    android:textColor="#888888"
+                    android:textSize="9sp"
+                    app:fontFamily="@font/myfont" />
+
+
+                <TextView
+                    android:id="@+id/vuMonDbText22"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="-16"
+                    android:textColor="#888888"
+                    android:textSize="9sp"
+                    app:fontFamily="@font/myfont" />
+
+                <TextView
+                    android:id="@+id/vuMonDbText26"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="-20"
+                    android:textColor="#888888"
+                    android:textSize="9sp"
+                    app:fontFamily="@font/myfont" />
+
+
+                <TextView
+                    android:id="@+id/vuMonDbText28"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="-25"
+                    android:textColor="#888888"
+                    android:textSize="9sp"
+                    app:fontFamily="@font/myfont" />
+
+                <TextView
+                    android:id="@+id/vuMonDbText29"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="-30"
+                    android:textColor="#888888"
+                    android:textSize="9sp"
+                    app:fontFamily="@font/myfont" />
+            </LinearLayout>
+
+
+            <!-- ПРАВЫЙ КАНАЛ (30 СЕГМЕНТОВ) -->
+            <LinearLayout
+                android:id="@+id/vuMonRightContainer"
+                android:layout_width="10dp"
+                android:layout_height="match_parent"
+                android:gravity="top"
+                android:orientation="vertical">
+
+                <!-- СЕГМЕНТ 0 (+3dB) - САМЫЙ ВЕРХ -->
+                <View
+                    android:id="@+id/vuMonRightSeg0"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="1dp"
+                    android:layout_weight="1"
+                    android:background="#FF111111" />
+
+                <!-- СЕГМЕНТ 1 (+2.7dB) -->
+                <View
+                    android:id="@+id/vuMonRightSeg1"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="1dp"
+                    android:layout_weight="1"
+                    android:background="#FF111111" />
+
+                <!-- СЕГМЕНТ 2 (+2.4dB) -->
+                <View
+                    android:id="@+id/vuMonRightSeg2"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="1dp"
+                    android:layout_weight="1"
+                    android:background="#FF111111" />
+
+                <!-- СЕГМЕНТ 3 (+2.1dB) -->
+                <View
+                    android:id="@+id/vuMonRightSeg3"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="1dp"
+                    android:layout_weight="1"
+                    android:background="#FF111111" />
+
+                <!-- СЕГМЕНТ 4 (+1.8dB) -->
+                <View
+                    android:id="@+id/vuMonRightSeg4"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="1dp"
+                    android:layout_weight="1"
+                    android:background="#FF111111" />
+
+                <!-- СЕГМЕНТ 5 (+1.5dB) -->
+                <View
+                    android:id="@+id/vuMonRightSeg5"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="1dp"
+                    android:layout_weight="1"
+                    android:background="#FF111111" />
+
+                <!-- СЕГМЕНТ 6 (+1.2dB) -->
+                <View
+                    android:id="@+id/vuMonRightSeg6"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="1dp"
+                    android:layout_weight="1"
+                    android:background="#FF111111" />
+
+                <!-- СЕГМЕНТ 7 (+0.9dB) -->
+                <View
+                    android:id="@+id/vuMonRightSeg7"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="1dp"
+                    android:layout_weight="1"
+                    android:background="#FF111111" />
+
+                <!-- СЕГМЕНТ 8 (+0.6dB) -->
+                <View
+                    android:id="@+id/vuMonRightSeg8"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="1dp"
+                    android:layout_weight="1"
+                    android:background="#FF111111" />
+
+                <!-- СЕГМЕНТ 9 (+0.3dB) -->
+                <View
+                    android:id="@+id/vuMonRightSeg9"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="1dp"
+                    android:layout_weight="1"
+                    android:background="#FF111111" />
+
+                <!-- СЕГМЕНТ 10 (0dB) -->
+                <View
+                    android:id="@+id/vuMonRightSeg10"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="1dp"
+                    android:layout_weight="1"
+                    android:background="#FF111111" />
+
+                <!-- СЕГМЕНТ 11 (-0.3dB) -->
+                <View
+                    android:id="@+id/vuMonRightSeg11"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="1dp"
+                    android:layout_weight="1"
+                    android:background="#FF111111" />
+
+                <!-- СЕГМЕНТ 12 (-0.6dB) -->
+                <View
+                    android:id="@+id/vuMonRightSeg12"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="1dp"
+                    android:layout_weight="1"
+                    android:background="#FF111111" />
+
+                <!-- СЕГМЕНТ 13 (-0.9dB) -->
+                <View
+                    android:id="@+id/vuMonRightSeg13"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="1dp"
+                    android:layout_weight="1"
+                    android:background="#FF111111" />
+
+                <!-- СЕГМЕНТ 14 (-1.2dB) -->
+                <View
+                    android:id="@+id/vuMonRightSeg14"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="1dp"
+                    android:layout_weight="1"
+                    android:background="#FF111111" />
+
+                <!-- СЕГМЕНТ 15 (-1.5dB) -->
+                <View
+                    android:id="@+id/vuMonRightSeg15"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="1dp"
+                    android:layout_weight="1"
+                    android:background="#FF111111" />
+
+                <!-- СЕГМЕНТ 16 (-1.8dB) -->
+                <View
+                    android:id="@+id/vuMonRightSeg16"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="1dp"
+                    android:layout_weight="1"
+                    android:background="#FF111111" />
+
+                <!-- СЕГМЕНТ 17 (-2.1dB) -->
+                <View
+                    android:id="@+id/vuMonRightSeg17"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="1dp"
+                    android:layout_weight="1"
+                    android:background="#FF111111" />
+
+                <!-- СЕГМЕНТ 18 (-2.4dB) -->
+                <View
+                    android:id="@+id/vuMonRightSeg18"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="1dp"
+                    android:layout_weight="1"
+                    android:background="#FF111111" />
+
+                <!-- СЕГМЕНТ 19 (-2.7dB) -->
+                <View
+                    android:id="@+id/vuMonRightSeg19"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="1dp"
+                    android:layout_weight="1"
+                    android:background="#FF111111" />
+
+                <!-- СЕГМЕНТ 20 (-3dB) -->
+                <View
+                    android:id="@+id/vuMonRightSeg20"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="1dp"
+                    android:layout_weight="1"
+                    android:background="#FF111111" />
+
+                <!-- СЕГМЕНТ 21 (-4dB) -->
+                <View
+                    android:id="@+id/vuMonRightSeg21"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="1dp"
+                    android:layout_weight="1"
+                    android:background="#FF111111" />
+
+                <!-- СЕГМЕНТ 22 (-5dB) -->
+                <View
+                    android:id="@+id/vuMonRightSeg22"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="1dp"
+                    android:layout_weight="1"
+                    android:background="#FF111111" />
+
+                <!-- СЕГМЕНТ 23 (-6dB) -->
+                <View
+                    android:id="@+id/vuMonRightSeg23"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="1dp"
+                    android:layout_weight="1"
+                    android:background="#FF111111" />
+
+                <!-- СЕГМЕНТ 24 (-8dB) -->
+                <View
+                    android:id="@+id/vuMonRightSeg24"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="1dp"
+                    android:layout_weight="1"
+                    android:background="#FF111111" />
+
+                <!-- СЕГМЕНТ 25 (-10dB) -->
+                <View
+                    android:id="@+id/vuMonRightSeg25"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="1dp"
+                    android:layout_weight="1"
+                    android:background="#FF111111" />
+
+                <!-- СЕГМЕНТ 26 (-12dB) -->
+                <View
+                    android:id="@+id/vuMonRightSeg26"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="1dp"
+                    android:layout_weight="1"
+                    android:background="#FF111111" />
+
+                <!-- СЕГМЕНТ 27 (-14dB) -->
+                <View
+                    android:id="@+id/vuMonRightSeg27"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="1dp"
+                    android:layout_weight="1"
+                    android:background="#FF111111" />
+
+                <!-- СЕГМЕНТ 28 (-16dB) -->
+                <View
+                    android:id="@+id/vuMonRightSeg28"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="1dp"
+                    android:layout_weight="1"
+                    android:background="#FF111111" />
+
+                <!-- СЕГМЕНТ 29 (-20dB) - САМЫЙ НИЗ, БЕЗ ОТСТУПА -->
+                <View
+                    android:id="@+id/vuMonRightSeg29"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:background="#FF111111" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- ========== ПРАВАЯ ДЕКА ========== -->
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/rightDeckContainer"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        app:cardCornerRadius="12dp"
+        app:layout_constraintBottom_toTopOf="@+id/rightControls"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/vuMonContainer"
+        app:layout_constraintTop_toBottomOf="@+id/pairNameContainer">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rightDeckList"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#ffffff"
+            android:scrollbars="none"
+            android:layout_margin="0dp"
+            android:padding="0dp"
+            app:fontFamily="@font/myfont" />
+    </com.google.android.material.card.MaterialCardView>
+
+    <!-- ========== НИЖНЯЯ ПАНЕЛЬ УПРАВЛЕНИЯ ========== -->
+
+    <!-- Левая дека: кнопка FOH+ и слайдер громкости -->
+    <LinearLayout
+        android:id="@+id/leftControls"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:layout_marginBottom="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/leftDeckContainer"
+        app:layout_constraintEnd_toEndOf="@+id/leftDeckContainer">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_marginTop="6dp">
+        <Button
+            android:id="@+id/btnMetr"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:backgroundTint="#ffffff"
+            android:text="METR OFF"
+            android:textColor="#000000"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            app:cornerRadius="30dp"
+            app:fontFamily="@font/myfont" />
+
+        <Button
+            android:id="@+id/btnMetrSet"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:backgroundTint="#ffffff"
+            android:layout_marginStart="4dp"
+            android:text="Metr Setings"
+            android:textColor="#000000"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            app:cornerRadius="30dp"
+            app:fontFamily="@font/myfont"/>
+    </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="20dp">
+
+            <TextView
+                android:id="@+id/volumeFohLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="0dp"
+                android:layout_marginEnd="0dp"
+                android:gravity="end"
+                android:text="FOH"
+                android:textColor="#FFFFFF"
+                android:textSize="14sp"
+                app:fontFamily="@font/myfont" />
+
+            <SeekBar
+                android:id="@+id/volumeFoh"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="0dp"
+                android:layout_weight="1"
+                android:gravity="start"
+                android:max="100"
+                android:progress="100"
+                android:paddingStart="10dp"
+                android:paddingEnd="16dp"
+                android:progressTint="#ffffff" />
+
+            <TextView
+                android:id="@+id/volumeFohText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="100%"
+                android:textColor="#FFFFFF"
+                android:textSize="14sp"
+                android:gravity="end"
+                android:layout_marginStart="0dp"
+                android:layout_marginEnd="10dp"
+                app:fontFamily="@font/myfont" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Правая дека: кнопка MON+ и слайдер громкости -->
+    <LinearLayout
+        android:id="@+id/rightControls"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:layout_marginBottom="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/rightDeckContainer"
+        app:layout_constraintStart_toStartOf="@+id/rightDeckContainer">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_marginTop="6dp">
+            <Button
+                android:id="@+id/menuButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:backgroundTint="#ffffff"
+                android:text="Menu"
+                android:textColor="#000000"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                app:cornerRadius="30dp"
+                app:fontFamily="@font/myfont" />
+            <Button
+                android:id="@+id/btnAddWav"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:backgroundTint="#ffffff"
+                android:layout_marginStart="4dp"
+                android:text="+WAV"
+                android:textColor="#000000"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                app:cornerRadius="30dp"
+                app:fontFamily="@font/myfont"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="20dp">
+
+            <TextView
+                android:id="@+id/volumeMonLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="0dp"
+                android:layout_marginEnd="0dp"
+                android:gravity="end"
+                android:text="MON"
+                android:textColor="#FFFFFF"
+                android:textSize="14sp"
+                app:fontFamily="@font/myfont" />
+
+            <SeekBar
+                android:id="@+id/volumeMon"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="0dp"
+                android:layout_weight="1"
+                android:gravity="start"
+                android:max="100"
+                android:progress="100"
+                android:paddingStart="10dp"
+                android:paddingEnd="16dp"
+                android:progressTint="#ffffff" />
+
+            <TextView
+                android:id="@+id/volumeMonText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="100%"
+                android:textColor="#FFFFFF"
+                android:textSize="14sp"
+                android:gravity="end"
+                android:layout_marginStart="0dp"
+                android:layout_marginEnd="10dp"
+                app:fontFamily="@font/myfont" />
+        </LinearLayout>
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- Оверлей с подсказками (полупрозрачный, кликабельный) -->
+    <FrameLayout
+        android:id="@+id/helpOverlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#99000000"
+        android:visibility="gone"
+        android:clickable="true"
+        android:focusable="true">
+
+        <!-- Контейнер для всех подсказок, расположенный по центру -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:orientation="vertical"
+            android:gravity="center_horizontal">
+
+            <!-- Строка с Flow и USB -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="16dp">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center_horizontal"
+                    android:layout_marginEnd="16dp">
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_arrow_up"
+                        android:tint="#FFFFFF"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Flow Mode"
+                        android:textColor="#FFFFFF"
+                        android:textSize="14sp"
+                        android:textStyle="bold"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center_horizontal">
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_arrow_up"
+                        android:tint="#FFFFFF"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="USB Status"
+                        android:textColor="#FFFFFF"
+                        android:textSize="14sp"
+                        android:textStyle="bold"/>
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- Строка с Play/Stop, Prev, Next -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="16dp">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center_horizontal"
+                    android:layout_marginEnd="16dp">
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_arrow_up"
+                        android:tint="#FFFFFF"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Play/Stop"
+                        android:textColor="#FFFFFF"
+                        android:textSize="14sp"
+                        android:textStyle="bold"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center_horizontal"
+                    android:layout_marginEnd="16dp">
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_arrow_up"
+                        android:tint="#FFFFFF"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Up/Back"
+                        android:textColor="#FFFFFF"
+                        android:textSize="14sp"
+                        android:textStyle="bold"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center_horizontal">
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_arrow_up"
+                        android:tint="#FFFFFF"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Down/Forward"
+                        android:textColor="#FFFFFF"
+                        android:textSize="14sp"
+                        android:textStyle="bold"/>
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- Строка с Custom и MetrSet -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="16dp">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center_horizontal"
+                    android:layout_marginEnd="16dp">
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_arrow_up"
+                        android:tint="#FFFFFF"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Add FOH"
+                        android:textColor="#FFFFFF"
+                        android:textSize="14sp"
+                        android:textStyle="bold"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center_horizontal">
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_arrow_up"
+                        android:tint="#FFFFFF"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Metr Settings"
+                        android:textColor="#FFFFFF"
+                        android:textSize="14sp"
+                        android:textStyle="bold"/>
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- Строка с Menu и +WAV -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="16dp">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center_horizontal"
+                    android:layout_marginEnd="16dp">
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_arrow_up"
+                        android:tint="#FFFFFF"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Menu"
+                        android:textColor="#FFFFFF"
+                        android:textSize="14sp"
+                        android:textStyle="bold"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center_horizontal">
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_arrow_up"
+                        android:tint="#FFFFFF"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Add MON"
+                        android:textColor="#FFFFFF"
+                        android:textSize="14sp"
+                        android:textStyle="bold"/>
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- Строка с Metronom -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center_horizontal">
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_arrow_up"
+                    android:tint="#FFFFFF"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Metronome"
+                    android:textColor="#FFFFFF"
+                    android:textSize="14sp"
+                    android:textStyle="bold"/>
+            </LinearLayout> <!-- закрытие LinearLayout метронома -->
+        </LinearLayout> <!-- закрытие главного LinearLayout (контейнер подсказок) -->
+    </FrameLayout> <!-- закрытие helpOverlay -->
+</FrameLayout> <!-- закрытие главного main_container -->

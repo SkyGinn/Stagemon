@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#FF1E1E1E"
+    android:padding="16dp">
+
+    <!-- ========== ВЕРХНЯЯ ПАНЕЛЬ ========== -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="8dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="✎ Editing Playlist:"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_weight="0" />
+
+        <EditText
+            android:id="@+id/tvPlaylistTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="NonameList"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:background="@drawable/bg_rounded_small"
+            android:padding="8dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:singleLine="true"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:cursorVisible="true"
+            android:imeOptions="actionDone"
+            />
+
+    </LinearLayout>
+
+    <!-- ========== DEFAULT ПОВЕДЕНИЕ ========== -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:background="@drawable/bg_rounded_small"
+        android:padding="0dp"
+        android:layout_marginBottom="4dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="FLOW - default behavior:"
+            android:textColor="#FFFFFF"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="20dp" />
+
+        <RadioGroup
+            android:id="@+id/defaultBehaviorGroup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="left"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/defaultInstant"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:text="Instant"
+                android:textColor="#FFFFFF" />
+
+            <RadioButton
+                android:id="@+id/defaultPause"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:text="Pause"
+                android:textColor="#FFFFFF" />
+
+            <RadioButton
+                android:id="@+id/defaultDelay"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Delay"
+                android:textColor="#FFFFFF" />
+
+                <!-- Delay контейнер (появляется/исчезает) -->
+                <LinearLayout
+                    android:id="@+id/defaultDelayContainer"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center"
+                    android:paddingTop="0dp"
+                    android:visibility="gone"
+                    android:layout_marginStart="8dp">
+
+                    <EditText
+                        android:id="@+id/defaultDelayValue"
+                        android:layout_width="50dp"
+                        android:layout_height="48dp"
+                        android:inputType="number"
+                        android:background="@drawable/bg_rounded_input"
+                        android:textColor="#FFFFFF"
+                        android:gravity="center"
+                        android:text="0"
+                        android:imeOptions="actionDone"
+                        />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="4dp"
+                        android:text="sec"
+                        android:textColor="#FFFFFF" />
+
+            </LinearLayout>
+        </RadioGroup>
+        <!-- ========== КНОПКА SAVE ========== -->
+        <Button
+            android:id="@+id/btnCancelEditor"
+            android:layout_width="100dp"
+            android:layout_height="45dp"
+            android:backgroundTint="#FF4444"
+            android:text="CANCEL"
+            android:textColor="#FFFFFF"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            app:cornerRadius="28dp"
+            android:visibility="gone" />
+        <Button
+            android:id="@+id/btnSaveEditor"
+            android:layout_width="100dp"
+            android:layout_height="45dp"
+            android:layout_marginStart="14dp"
+            android:layout_marginEnd="10dp"
+            android:backgroundTint="#4CAF50"
+            android:text="SAVE"
+            android:textColor="#FFFFFF"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            app:cornerRadius="28dp" />
+
+    </LinearLayout>
+
+    <!-- ========== СПИСОК ПАР ========== -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/editorRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="@drawable/bg_rounded"
+        android:padding="8dp"/>
+</LinearLayout>

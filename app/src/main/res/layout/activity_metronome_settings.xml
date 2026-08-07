@@ -1,0 +1,660 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="4dp"
+    android:background="@drawable/dialog_background">
+
+    <!-- ЗАГОЛОВОК -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="0dp">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="30dp"
+            android:layout_weight="1"
+            android:text="METRONOME SETTINGS"
+            android:textColor="#FFFFFF"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            app:fontFamily="@font/myfont"/>
+
+        <Button
+            android:id="@+id/btnClose"
+            android:layout_width="80dp"
+            android:layout_height="36dp"
+            android:text="CLOSE"
+            android:textSize="12sp"
+            android:textColor="#FFFFFF"
+            android:backgroundTint="#333333"
+            app:cornerRadius="18dp"
+            app:fontFamily="@font/myfont"/>
+
+    </LinearLayout>
+
+
+    <!-- СТРОКА С НАСТРОЙКАМИ (ГОРИЗОНТАЛЬНЫЙ СКРОЛЛ) -->
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="top">
+
+            <!-- ЛЕВАЯ ГРУППА (METRONOM) -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="horizontal"
+                android:gravity="top">
+
+                <!-- Output channel -->
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center_horizontal"
+                    android:layout_marginEnd="4dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="MON OUTPUT METRONOM"
+                        android:textColor="#888888"
+                        android:textSize="11sp"
+                        android:layout_marginBottom="0dp"
+                        app:fontFamily="@font/myfont"/>
+
+                    <RadioGroup
+                        android:id="@+id/radioGroupChannel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <RadioButton
+                            android:id="@+id/radioLeft"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="L"
+                            android:textColor="#FFFFFF"
+                            android:buttonTint="#FFFFFF"
+                            android:gravity="center"
+                            android:layout_marginEnd="4dp"
+                            app:fontFamily="@font/myfont"/>
+
+                        <RadioButton
+                            android:id="@+id/radioRight"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="R"
+                            android:textColor="#FFFFFF"
+                            android:buttonTint="#FFFFFF"
+                            android:gravity="center"
+                            android:layout_marginEnd="4dp"
+                            app:fontFamily="@font/myfont"/>
+
+                        <RadioButton
+                            android:id="@+id/radioBoth"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="LR"
+                            android:textColor="#FFFFFF"
+                            android:buttonTint="#FFFFFF"
+                            android:gravity="center"
+                            android:checked="true"
+                            app:fontFamily="@font/myfont"/>
+                    </RadioGroup>
+                    <!-- Output channel (уже есть) -->
+
+                    <!-- DURATION (ПЕРЕМЕСТИТЬ СЮДА, ПОСЛЕ OUTPUT) -->
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:gravity="center_horizontal"
+                        android:layout_marginStart="4dp"
+                        android:layout_marginEnd="4dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="DURATION CLICK"
+                            android:textColor="#888888"
+                            android:textSize="11sp"
+                            android:layout_marginBottom="0dp"
+                            app:fontFamily="@font/myfont"/>
+
+                        <com.google.android.material.button.MaterialButtonToggleGroup
+                            android:id="@+id/toggleDuration"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            app:singleSelection="true">
+
+                            <Button
+                                android:id="@+id/btnDuration10"
+                                android:layout_width="60dp"
+                                android:layout_height="40dp"
+                                android:textColor="#888888"
+                                android:textSize="12sp"
+                                android:text="10"
+                                style="@style/Widget.MaterialComponents.Button.OutlinedButton"/>
+
+                            <Button
+                                android:id="@+id/btnDuration15"
+                                android:layout_width="60dp"
+                                android:layout_height="40dp"
+                                android:textColor="#888888"
+                                android:textSize="12sp"
+                                android:text="15"
+                                style="@style/Widget.MaterialComponents.Button.OutlinedButton"/>
+                            <Button
+                                android:id="@+id/btnDuration25"
+                                android:layout_width="60dp"
+                                android:layout_height="40dp"
+                                android:textColor="#888888"
+                                android:textSize="12sp"
+                                android:text="25"
+                                style="@style/Widget.MaterialComponents.Button.OutlinedButton"/>
+                        </com.google.android.material.button.MaterialButtonToggleGroup>
+                    </LinearLayout>
+
+                    <!-- Strong frequency (остаётся) -->
+                    <!-- Weak frequency (остаётся) -->
+                    <!-- Waveform (остаётся) -->
+                </LinearLayout>
+
+                <!-- Strong frequency -->
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center_horizontal"
+                    android:layout_marginEnd="2dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="STRONG"
+                        android:textColor="#888888"
+                        android:textSize="11sp"
+                        android:layout_marginBottom="2dp"
+                        app:fontFamily="@font/myfont"/>
+
+                    <com.aigestudio.wheelpicker.WheelPicker
+                        android:id="@+id/wheelPickerStrongFreq"
+                        android:layout_width="60dp"
+                        android:layout_height="90dp"
+                        android:descendantFocusability="blocksDescendants"
+                        android:background="@drawable/bg_rounded_small"
+                        app:wheel_item_text_size="16sp"
+                        app:wheel_selected_item_text_color="#FFFFFF"
+                        app:wheel_item_text_color="#FFFFFF"
+                        app:wheel_indicator="true"
+                        app:wheel_indicator_color="#888888"
+                        app:wheel_indicator_size="2dp"
+                        app:wheel_item_space="22dp"
+                        app:wheel_curtain="false"
+                        app:wheel_curtain_color="#33000000"
+                        app:wheel_atmospheric="true"
+                        app:wheel_curved="true"
+                        app:wheel_visible_item_count="5"/>
+                </LinearLayout>
+
+                <!-- Weak frequency -->
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center_horizontal"
+                    android:layout_marginEnd="2dp">>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="WEAK"
+                        android:textColor="#888888"
+                        android:textSize="11sp"
+                        android:layout_marginBottom="2dp"
+                        app:fontFamily="@font/myfont"/>
+
+                    <com.aigestudio.wheelpicker.WheelPicker
+                        android:id="@+id/wheelPickerWeakFreq"
+                        android:layout_width="60dp"
+                        android:layout_height="90dp"
+                        android:descendantFocusability="blocksDescendants"
+                        android:background="@drawable/bg_rounded_small"
+                        app:wheel_item_text_size="16sp"
+                        app:wheel_selected_item_text_color="#FFFFFF"
+                        app:wheel_item_text_color="#FFFFFF"
+                        app:wheel_indicator="true"
+                        app:wheel_indicator_color="#888888"
+                        app:wheel_indicator_size="2dp"
+                        app:wheel_item_space="22dp"
+                        app:wheel_curtain="false"
+                        app:wheel_curtain_color="#33000000"
+                        app:wheel_atmospheric="true"
+                        app:wheel_curved="true"
+                        app:wheel_visible_item_count="5"/>
+
+                </LinearLayout>
+
+                <!-- Weak frequency -->
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center_horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="MICRO"
+                        android:textColor="#888888"
+                        android:textSize="11sp"
+                        android:layout_marginBottom="2dp"
+                        app:fontFamily="@font/myfont"/>
+
+                    <com.aigestudio.wheelpicker.WheelPicker
+                        android:id="@+id/wheelPickerMicroFreq"
+                        android:layout_width="60dp"
+                        android:layout_height="90dp"
+                        android:descendantFocusability="blocksDescendants"
+                        android:background="@drawable/bg_rounded_small"
+                        app:wheel_item_text_size="16sp"
+                        app:wheel_selected_item_text_color="#FFFFFF"
+                        app:wheel_item_text_color="#FFFFFF"
+                        app:wheel_indicator="true"
+                        app:wheel_indicator_color="#888888"
+                        app:wheel_indicator_size="2dp"
+                        app:wheel_item_space="22dp"
+                        app:wheel_curtain="false"
+                        app:wheel_curtain_color="#33000000"
+                        app:wheel_atmospheric="true"
+                        app:wheel_curved="true"
+                        app:wheel_visible_item_count="5"/>
+
+                </LinearLayout>
+
+
+
+            </LinearLayout>
+
+            <!-- ПРАВАЯ ГРУППА (SONG) -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="horizontal"
+                android:gravity="top|end">
+
+                <!-- Waveform -->
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center_horizontal"
+                    android:layout_marginStart="2dp"
+                    android:layout_marginEnd="8dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="WAVEFORM"
+                        android:textColor="#888888"
+                        android:textSize="11sp"
+                        android:layout_marginBottom="2dp"
+                        app:fontFamily="@font/myfont"/>
+
+                    <Spinner
+                        android:id="@+id/spinnerWaveform"
+                        android:layout_width="80dp"
+                        android:layout_height="40dp"
+                        android:background="@drawable/bg_rounded_small"
+                        android:padding="2dp" />
+                </LinearLayout>
+
+                <!-- Time signature -->
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center_horizontal"
+                    android:layout_marginEnd="8dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="SIGNATURE"
+                        android:textColor="#888888"
+                        android:textSize="11sp"
+                        android:layout_marginBottom="2dp"
+                        app:fontFamily="@font/myfont"/>
+
+                    <Spinner
+                        android:id="@+id/spinnerTimeSignature"
+                        android:layout_width="90dp"
+                        android:layout_height="40dp"
+                        android:background="@drawable/bg_rounded_small"
+                        android:padding="2dp"
+                        app:cornerRadius="30dp"
+                        app:fontFamily="@font/myfont"/>
+                </LinearLayout>
+
+                <!-- PATTERN КНОПКА (НОВАЯ, ПЕРЕД BPM) -->
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center_horizontal"
+                    android:layout_marginEnd="8dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="ADVANCE"
+                        android:textColor="#888888"
+                        android:textSize="11sp"
+                        android:layout_marginBottom="2dp"
+                        app:fontFamily="@font/myfont"/>
+
+                    <Button
+                        android:id="@+id/btnPattern"
+                        android:layout_width="120dp"
+                        android:layout_height="50dp"
+                        android:text="PATTERN"
+                        android:textSize="12sp"
+                        android:textColor="#FFFFFF"
+                        android:backgroundTint="#FF5722"
+                        app:cornerRadius="22dp"
+                        app:fontFamily="@font/myfont"/>
+                    <Button
+                        android:id="@+id/btnTempoTrack"
+                        android:layout_width="120dp"
+                        android:layout_height="50dp"
+                        android:text="TEMPO TRACK"
+                        android:textSize="12sp"
+                        android:textColor="#FFFFFF"
+                        android:backgroundTint="#9C27B0"
+                        app:cornerRadius="22dp"
+                        app:fontFamily="@font/myfont"/>
+                </LinearLayout>
+
+
+
+                <!-- BPM -->
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center_horizontal"
+                    android:layout_marginEnd="4dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="BPM"
+                        android:textColor="#888888"
+                        android:textSize="11sp"
+                        android:layout_marginBottom="2dp"
+                        app:fontFamily="@font/myfont"/>
+
+                    <com.aigestudio.wheelpicker.WheelPicker
+                        android:id="@+id/wheelPickerBpm"
+                        android:layout_width="100dp"
+                        android:layout_height="90dp"
+                        android:background="@drawable/bg_rounded_small"
+                        android:descendantFocusability="blocksDescendants"
+                        app:wheel_atmospheric="true"
+                        app:wheel_curtain="false"
+                        app:wheel_curtain_color="#33000000"
+                        app:wheel_curved="true"
+                        app:wheel_indicator="true"
+                        app:wheel_indicator_color="#888888"
+                        app:wheel_indicator_size="2dp"
+                        app:wheel_item_space="24dp"
+                        app:wheel_item_text_color="#FFFFFF"
+                        app:wheel_item_text_size="18sp"
+                        app:wheel_selected_item_text_color="#FFFFFF"
+                        app:wheel_visible_item_count="5"
+                        app:wheel_item_align="left"/>
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+
+    <!-- ==================== БЛОК ТРЕКА (СЛЕВА) ==================== -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="8dp">
+
+        <!-- ЛЕВАЯ ПОЛОВИНА - ТРЕК -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:background="@drawable/bg_rounded_small"
+            android:padding="4dp"
+            android:layout_marginEnd="8dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="🎵 SONG PLAYER"
+                android:textColor="#4CAF50"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="4dp"
+                app:fontFamily="@font/myfont"/>
+
+            <!-- Громкость трека -->
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="12dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="VOL SONG"
+                    android:textColor="#888888"
+                    android:textSize="10sp"
+                    android:layout_marginBottom="0dp"
+                    app:fontFamily="@font/myfont"/>
+
+                <SeekBar
+                    android:id="@+id/volumeTrackSettings"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:max="100"
+                    android:progress="100"
+                    android:progressTint="#4CAF50"
+                    android:layout_marginEnd="8dp"/>
+
+                <TextView
+                    android:id="@+id/volumeTrackSettingsText"
+                    android:layout_width="40dp"
+                    android:layout_height="wrap_content"
+                    android:text="100%"
+                    android:textColor="#4CAF50"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    app:fontFamily="@font/myfont"/>
+            </LinearLayout>
+
+            <!-- Выбор трека -->
+            <Spinner
+                android:id="@+id/spinnerSongSelection"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:background="@drawable/bg_rounded_small"
+                android:padding="2dp"
+                android:layout_marginBottom="2dp"/>
+
+
+
+            <!-- Кнопки PLAY/STOP для трека -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center">
+
+                <Button
+                    android:id="@+id/btnPlayTrack"
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_weight="1"
+                    android:text="PLAY Song"
+                    android:textSize="14sp"
+                    android:textColor="#000000"
+                    android:backgroundTint="#4CAF50"
+                    android:layout_marginEnd="8dp"
+                    app:cornerRadius="24dp"
+                    app:fontFamily="@font/myfont"/>
+
+                <Button
+                    android:id="@+id/btnStopTrack"
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_weight="1"
+                    android:text="STOP Song"
+                    android:textSize="14sp"
+                    android:textColor="#FFFFFF"
+                    android:backgroundTint="#F44336"
+                    app:cornerRadius="24dp"
+                    app:fontFamily="@font/myfont"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <!-- ПРАВАЯ ПОЛОВИНА - МЕТРОНОМ -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:background="@drawable/bg_rounded_small"
+            android:padding="4dp"
+            android:layout_marginStart="8dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="🎛 METRONOME"
+                android:textColor="#2196F3"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="4dp"
+                app:fontFamily="@font/myfont"/>
+
+            <!-- Громкость метронома -->
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="12dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="VOL METR"
+                    android:textColor="#888888"
+                    android:textSize="10sp"
+                    android:layout_marginBottom="0dp"
+                    app:fontFamily="@font/myfont"/>
+
+                <SeekBar
+                    android:id="@+id/volumeMetroSettings"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:max="100"
+                    android:progress="100"
+                    android:progressTint="#2196F3"
+                    android:layout_marginEnd="8dp"/>
+
+                <TextView
+                    android:id="@+id/volumeMetroSettingsText"
+                    android:layout_width="40dp"
+                    android:layout_height="wrap_content"
+                    android:text="100%"
+                    android:textColor="#2196F3"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    app:fontFamily="@font/myfont"/>
+            </LinearLayout>
+
+            <!-- PATTERN кнопка -->
+            <Button
+                android:id="@+id/btnTap"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:text="TAP TO SET BPM"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:textColor="#FFFFFF"
+                android:backgroundTint="#FF9800"
+                android:layout_marginBottom="2dp"
+                app:cornerRadius="24dp"
+                app:fontFamily="@font/myfont"/>
+
+
+            <!-- Кнопки PLAY/STOP для метронома (HOLD TO PLAY) -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center">
+
+                <Button
+                    android:id="@+id/btnPlayMetro"
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_weight="1"
+                    android:text="Play (HOLD TO PAUSE)"
+                    android:textSize="12sp"
+                    android:textColor="#000000"
+                    android:backgroundTint="#4CAF50"
+                    android:layout_marginEnd="8dp"
+                    app:cornerRadius="24dp"
+                    app:fontFamily="@font/myfont"/>
+
+                <Button
+                    android:id="@+id/btnStopMetro"
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_weight="1"
+                    android:text="STOP METR"
+                    android:textSize="14sp"
+                    android:textColor="#FFFFFF"
+                    android:backgroundTint="#F44336"
+                    app:cornerRadius="24dp"
+                    app:fontFamily="@font/myfont"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+
+</LinearLayout>

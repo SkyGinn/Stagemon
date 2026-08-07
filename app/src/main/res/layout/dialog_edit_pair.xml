@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="20dp"
+    android:background="#FF1E1E1E">
+
+    <EditText
+        android:id="@+id/etPairName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#FF333333"
+        android:textColor="#FFFFFF"
+        android:padding="12dp"
+        android:layout_marginBottom="20dp"
+        android:hint="Enter song name"
+        android:textColorHint="#888888"
+        app:fontFamily="@font/myfont"
+        android:imeOptions="actionDone"
+        android:singleLine="true"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="FLOW - behavior after:"
+        android:textColor="#FFFFFF"
+        android:textSize="14sp"
+        android:layout_marginBottom="8dp"
+        app:fontFamily="@font/myfont" />
+
+    <RadioGroup
+        android:id="@+id/rgPairBehavior"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:weightSum="5">
+
+        <RadioButton
+            android:id="@+id/rbPairGlobal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="2dp"
+            android:layout_weight="1"
+            android:buttonTint="#FFFFFF"
+            android:text="Default"
+            android:textColor="#FFFFFF"
+            app:fontFamily="@font/myfont" />
+
+        <RadioButton
+            android:id="@+id/rbPairInstant"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="2dp"
+            android:layout_weight="1"
+            android:buttonTint="#FFFFFF"
+            android:text="Instant"
+            android:textColor="#FFFFFF"
+            app:fontFamily="@font/myfont" />
+
+        <RadioButton
+            android:id="@+id/rbPairPause"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="2dp"
+            android:layout_weight="1"
+            android:buttonTint="#FFFFFF"
+            android:text="Pause"
+            android:textColor="#FFFFFF"
+            app:fontFamily="@font/myfont" />
+
+        <RadioButton
+            android:id="@+id/rbPairDelay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:buttonTint="#FFFFFF"
+            android:text="Delay"
+            android:textColor="#FFFFFF"
+            app:fontFamily="@font/myfont" />
+
+        <LinearLayout
+            android:id="@+id/delayContainer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+
+            <EditText
+                android:id="@+id/etPairDelay"
+                android:layout_width="50dp"
+                android:layout_height="36dp"
+                android:layout_marginStart="4dp"
+                android:background="#FF333333"
+                android:gravity="center"
+                android:inputType="number"
+                android:text="0"
+                android:textColor="#FFFFFF"
+                app:fontFamily="@font/myfont" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:gravity="center"
+                android:inputType="number"
+                android:text="sec"
+                android:textColor="#FFFFFF"
+                app:fontFamily="@font/myfont" />
+        </LinearLayout>
+    </RadioGroup>
+
+</LinearLayout>

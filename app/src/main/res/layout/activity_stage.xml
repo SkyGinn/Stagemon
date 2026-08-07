@@ -1,0 +1,300 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FF000000">
+
+    <!-- Кнопка Back -->
+    <Button
+        android:id="@+id/btnBack"
+        android:layout_width="80dp"
+        android:layout_height="44dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="20dp"
+        android:background="@drawable/bg_rounded_white"
+        android:text="BACK"
+        android:textColor="#000000"
+        android:textSize="12sp"
+        app:fontFamily="@font/myfont"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Окошко предыдущей песни -->
+    <TextView
+        android:id="@+id/tvPrevSong"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="8dp"
+        android:background="@drawable/bg_rounded_small"
+        android:gravity="center"
+        android:text="…"
+        android:textColor="#FFFFFF"
+        android:textSize="14sp"
+        app:fontFamily="@font/myfont"
+        app:layout_constraintBottom_toTopOf="@+id/btnPrev"
+        app:layout_constraintEnd_toStartOf="@+id/btnPrev"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed" />
+
+    <!-- Кнопка Prev -->
+    <ImageButton
+        android:id="@+id/btnPrev"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/bg_rounded_white"
+        android:src="@drawable/ic_arrow_up"
+        android:scaleType="fitCenter"
+        android:padding="12dp"
+        android:tint="@null"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/btnPlayStop"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvPrevSong" />
+
+    <!-- Окошко текущей песни -->
+    <TextView
+        android:id="@+id/tvCurrentSong"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:background="@drawable/bg_rounded_small"
+        android:gravity="center"
+        android:text="…"
+        android:textColor="#FFFFFF"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:fontFamily="@font/myfont"
+        app:layout_constraintBottom_toTopOf="@+id/btnPlayStop"
+        app:layout_constraintEnd_toStartOf="@+id/tvNextSong"
+        app:layout_constraintStart_toEndOf="@+id/btnPrev"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- Окошко с поведением (справа от текущей песни) -->
+    <TextView
+        android:id="@+id/tvBehavior"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="4dp"
+        android:background="@drawable/bg_rounded_small"
+        android:gravity="center"
+        android:text=""
+        android:textColor="#FFFFFF"
+        android:textSize="12sp"
+        app:fontFamily="@font/myfont"
+        app:layout_constraintEnd_toEndOf="@+id/tvCurrentSong"
+        app:layout_constraintTop_toTopOf="@+id/tvCurrentSong"
+        app:layout_constraintBottom_toBottomOf="@+id/tvCurrentSong" />
+
+    <!-- Окошко с темпом (слева от текущей песни) -->
+    <TextView
+        android:id="@+id/tvTempo"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginEnd="4dp"
+        android:background="@drawable/bg_rounded_small"
+        android:gravity="center"
+        android:text=""
+        android:textColor="#FFFFFF"
+        android:textSize="12sp"
+        app:fontFamily="@font/myfont"
+        app:layout_constraintStart_toStartOf="@+id/tvCurrentSong"
+        app:layout_constraintTop_toTopOf="@+id/tvCurrentSong"
+        app:layout_constraintBottom_toBottomOf="@+id/tvCurrentSong" />
+
+    <!-- Окошко следующей песни -->
+    <TextView
+        android:id="@+id/tvNextSong"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/bg_rounded_small"
+        android:gravity="center"
+        android:text="…"
+        android:textColor="#FFFFFF"
+        android:textSize="14sp"
+        app:fontFamily="@font/myfont"
+        app:layout_constraintBottom_toTopOf="@+id/btnNext"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/tvCurrentSong"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- Кнопка Next -->
+    <ImageButton
+        android:id="@+id/btnNext"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/bg_rounded_white"
+        android:src="@drawable/ic_arrow_down"
+        android:scaleType="fitCenter"
+        android:padding="12dp"
+        android:tint="@null"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/btnPlayStop"
+        app:layout_constraintTop_toBottomOf="@+id/tvNextSong" />
+
+    <!-- Кнопка Play/Stop -->
+    <Button
+        android:id="@+id/btnPlayStop"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/bg_rounded_white"
+        android:text="PLAY"
+        android:textColor="#000000"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:fontFamily="@font/myfont"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/btnNext"
+        app:layout_constraintStart_toEndOf="@+id/btnPrev"
+        app:layout_constraintTop_toBottomOf="@+id/tvCurrentSong" />
+
+    <!-- Громкость FOH -->
+    <LinearLayout
+        android:id="@+id/layoutFoh"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintTop_toBottomOf="@+id/btnPlayStop"
+        app:layout_constraintBottom_toTopOf="@+id/layoutMetr"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintVertical_chainStyle="packed">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="FOH"
+            android:textColor="#FFFFFF"
+            android:textSize="14sp"
+            app:fontFamily="@font/myfont" />
+
+        <SeekBar
+            android:id="@+id/seekFoh"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:max="100"
+            android:progress="100"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:progressTint="#ffffff" />
+
+        <TextView
+            android:id="@+id/tvFohVol"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="100%"
+            android:textColor="#FFFFFF"
+            android:textSize="14sp"
+            android:gravity="end"
+            app:fontFamily="@font/myfont" />
+    </LinearLayout>
+
+    <!-- Громкость METR (метроном) -->
+    <LinearLayout
+        android:id="@+id/layoutMetr"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginTop="4dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintTop_toBottomOf="@+id/layoutFoh"
+        app:layout_constraintBottom_toTopOf="@+id/layoutMon"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="METR"
+            android:textColor="#FFFFFF"
+            android:textSize="14sp"
+            app:fontFamily="@font/myfont" />
+
+        <SeekBar
+            android:id="@+id/seekMetr"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:max="100"
+            android:progress="100"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:progressTint="#ffffff" />
+
+        <TextView
+            android:id="@+id/tvMetrVol"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="100%"
+            android:textColor="#FFFFFF"
+            android:textSize="14sp"
+            android:gravity="end"
+            app:fontFamily="@font/myfont" />
+    </LinearLayout>
+
+    <!-- Громкость MON -->
+    <LinearLayout
+        android:id="@+id/layoutMon"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginTop="4dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintTop_toBottomOf="@+id/layoutMetr"
+        app:layout_constraintBottom_toTopOf="@+id/btnBack"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="MON"
+            android:textColor="#FFFFFF"
+            android:textSize="14sp"
+            app:fontFamily="@font/myfont" />
+
+        <SeekBar
+            android:id="@+id/seekMon"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:max="100"
+            android:progress="100"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:progressTint="#ffffff" />
+
+        <TextView
+            android:id="@+id/tvMonVol"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="100%"
+            android:textColor="#FFFFFF"
+            android:textSize="14sp"
+            android:gravity="end"
+            app:fontFamily="@font/myfont" />
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
