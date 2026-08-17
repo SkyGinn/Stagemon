@@ -353,6 +353,8 @@ void OboeEngine::stop() {
 
 void OboeEngine::setPosition(int64_t position) {
     std::lock_guard<std::mutex> lock(mLock);
+    
+    // Устанавливаем флаг seek - обработка будет в onAudioReady
     mSeekRequested = true;
     mSeekPosition = position;
     LOGD("Seek requested to: %ld", position);
@@ -534,20 +536,36 @@ bool OboeEngine::getNextSample(float &l, float &r, bool isFoh) {
 oboe::DataCallbackResult OboeEngine::onAudioReady(oboe::AudioStream *stream, void *audioData, int32_t numFrames) {
     if (!mIsPlaying || numFrames <= 0) return oboe::DataCallbackResult::Continue;
 
-    // ========== ОБРАБОТКА SEEK ==========
+    // ========== ОБРАБОТКА SEEK (ДО ЧТЕНИЯ СЭМПЛОВ) ==========
     if (mSeekRequested) {
         mSeekRequested = false;
         mSeekInProgress = true;
         mSeekFadeFrames = 0;
 
+        // Отключаем varispeed
+        mFohVarispeedActive = false;
+        mMonVarispeedActive = false;
+
+        // Полностью очищаем ВСЕ буферы
         mFohPcmBuffer.clear();
         mMonPcmBuffer.clear();
         mFohBufferPos = 0;
         mMonBufferPos = 0;
+        
+        mFohVarispeedBuf.clear();
+        mMonVarispeedBuf.clear();
+        mFohVarispeedBufPos = 0;
+        mMonVarispeedBufPos = 0;
+        mFohVarispeedPhase = 0.0f;
+        mMonVarispeedPhase = 0.0f;
+        
+        // Сбрасываем EOS флаги
+        mFohInputEos = false;
         mFohOutputEos = false;
+        mMonInputEos = false;
         mMonOutputEos = false;
 
-
+        // Выполняем lseek
         if (mFohFd != -1) {
             lseek(mFohFd, mSeekPosition + mFohDataOffset, SEEK_SET);
         }
