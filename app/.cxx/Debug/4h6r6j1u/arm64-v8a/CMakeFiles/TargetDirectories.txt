@@ -1,0 +1,3 @@
+C:/Users/User/AndroidStudioProjects/Stagemon/app/.cxx/Debug/4h6r6j1u/arm64-v8a/CMakeFiles/stagemon.dir
+C:/Users/User/AndroidStudioProjects/Stagemon/app/.cxx/Debug/4h6r6j1u/arm64-v8a/CMakeFiles/edit_cache.dir
+C:/Users/User/AndroidStudioProjects/Stagemon/app/.cxx/Debug/4h6r6j1u/arm64-v8a/CMakeFiles/rebuild_cache.dir

@@ -1,0 +1,9 @@
+# ninja log v5
+3	1560	8033338236560334	CMakeFiles/stagemon.dir/MetronomeEngine.cpp.o	aa129d390c4c50bd
+0	2266	8033338243621269	CMakeFiles/stagemon.dir/oboe_engine.cpp.o	c2247e6013ca4c04
+2267	2403	8033338245015424	C:/Users/User/AndroidStudioProjects/Stagemon/app/build/intermediates/cxx/RelWithDebInfo/3n5p2452/obj/x86/libstagemon.so	d242751ca4955f5e
+0	13	0	clean	c43cb551db0bac3b
+11	1620	8038341580493527	CMakeFiles/stagemon.dir/MetronomeEngine.cpp.o	aa129d390c4c50bd
+8	2422	8038341588493383	CMakeFiles/stagemon.dir/oboe_engine.cpp.o	c2247e6013ca4c04
+2423	2551	8038341589823376	C:/Users/User/AndroidStudioProjects/Stagemon/app/build/intermediates/cxx/RelWithDebInfo/3n5p2452/obj/x86/libstagemon.so	d242751ca4955f5e
+0	10	0	clean	c43cb551db0bac3b

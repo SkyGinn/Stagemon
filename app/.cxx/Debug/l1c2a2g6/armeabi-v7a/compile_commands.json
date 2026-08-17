@@ -1,0 +1,7 @@
+[
+{
+  "directory": "C:/Users/User/AndroidStudioProjects/Stagemon/app/.cxx/Debug/l1c2a2g6/armeabi-v7a",
+  "command": "C:\\Users\\User\\AppData\\Local\\Android\\Sdk\\ndk\\27.0.12077973\\toolchains\\llvm\\prebuilt\\windows-x86_64\\bin\\clang++.exe --target=armv7-none-linux-androideabi26 --sysroot=C:/Users/User/AppData/Local/Android/Sdk/ndk/27.0.12077973/toolchains/llvm/prebuilt/windows-x86_64/sysroot -Dstagemon_EXPORTS -IC:/Users/User/AndroidStudioProjects/Stagemon/app/src/main/cpp/oboe-prefab/modules/oboe/include -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -march=armv7-a -mthumb -Wformat -Werror=format-security  -std=c++17 -fno-limit-debug-info  -fPIC -o CMakeFiles\\stagemon.dir\\audio_engine.cpp.o -c C:\\Users\\User\\AndroidStudioProjects\\Stagemon\\app\\src\\main\\cpp\\audio_engine.cpp",
+  "file": "C:\\Users\\User\\AndroidStudioProjects\\Stagemon\\app\\src\\main\\cpp\\audio_engine.cpp"
+}
+]

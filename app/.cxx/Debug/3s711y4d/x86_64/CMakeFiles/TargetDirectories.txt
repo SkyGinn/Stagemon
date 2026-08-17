@@ -1,0 +1,14 @@
+C:/Users/User/AndroidStudioProjects/Stagemon/app/.cxx/Debug/3s711y4d/x86_64/CMakeFiles/stagemon.dir
+C:/Users/User/AndroidStudioProjects/Stagemon/app/.cxx/Debug/3s711y4d/x86_64/CMakeFiles/edit_cache.dir
+C:/Users/User/AndroidStudioProjects/Stagemon/app/.cxx/Debug/3s711y4d/x86_64/CMakeFiles/rebuild_cache.dir
+C:/Users/User/AndroidStudioProjects/Stagemon/app/.cxx/Debug/3s711y4d/x86_64/CMakeFiles/list_install_components.dir
+C:/Users/User/AndroidStudioProjects/Stagemon/app/.cxx/Debug/3s711y4d/x86_64/CMakeFiles/install.dir
+C:/Users/User/AndroidStudioProjects/Stagemon/app/.cxx/Debug/3s711y4d/x86_64/CMakeFiles/install/local.dir
+C:/Users/User/AndroidStudioProjects/Stagemon/app/.cxx/Debug/3s711y4d/x86_64/CMakeFiles/install/strip.dir
+C:/Users/User/AndroidStudioProjects/Stagemon/app/.cxx/Debug/3s711y4d/x86_64/oboe/CMakeFiles/oboe.dir
+C:/Users/User/AndroidStudioProjects/Stagemon/app/.cxx/Debug/3s711y4d/x86_64/oboe/CMakeFiles/edit_cache.dir
+C:/Users/User/AndroidStudioProjects/Stagemon/app/.cxx/Debug/3s711y4d/x86_64/oboe/CMakeFiles/rebuild_cache.dir
+C:/Users/User/AndroidStudioProjects/Stagemon/app/.cxx/Debug/3s711y4d/x86_64/oboe/CMakeFiles/list_install_components.dir
+C:/Users/User/AndroidStudioProjects/Stagemon/app/.cxx/Debug/3s711y4d/x86_64/oboe/CMakeFiles/install.dir
+C:/Users/User/AndroidStudioProjects/Stagemon/app/.cxx/Debug/3s711y4d/x86_64/oboe/CMakeFiles/install/local.dir
+C:/Users/User/AndroidStudioProjects/Stagemon/app/.cxx/Debug/3s711y4d/x86_64/oboe/CMakeFiles/install/strip.dir

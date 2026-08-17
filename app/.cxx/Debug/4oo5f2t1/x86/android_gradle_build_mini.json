@@ -1,0 +1,29 @@
+{
+  "buildFiles": [
+    "C:\\Users\\User\\AndroidStudioProjects\\Stagemon\\app\\src\\main\\cpp\\CMakeLists.txt"
+  ],
+  "cleanCommandsComponents": [
+    [
+      "G:\\Android\\Sdk\\cmake\\3.22.1\\bin\\ninja.exe",
+      "-C",
+      "C:\\Users\\User\\AndroidStudioProjects\\Stagemon\\app\\.cxx\\Debug\\4oo5f2t1\\x86",
+      "clean"
+    ]
+  ],
+  "buildTargetsCommandComponents": [
+    "G:\\Android\\Sdk\\cmake\\3.22.1\\bin\\ninja.exe",
+    "-C",
+    "C:\\Users\\User\\AndroidStudioProjects\\Stagemon\\app\\.cxx\\Debug\\4oo5f2t1\\x86",
+    "{LIST_OF_TARGETS_TO_BUILD}"
+  ],
+  "libraries": {
+    "stagemon::@6890427a1f51a3e7e1df": {
+      "artifactName": "stagemon",
+      "abi": "x86",
+      "output": "C:\\Users\\User\\AndroidStudioProjects\\Stagemon\\app\\build\\intermediates\\cxx\\Debug\\4oo5f2t1\\obj\\x86\\libstagemon.so",
+      "runtimeFiles": [
+        "C:\\Users\\User\\.gradle\\caches\\8.13\\transforms\\dfeae6252926bbfcabea9a70b959fc8b\\transformed\\jetified-oboe-1.10.0\\prefab\\modules\\oboe\\libs\\android.x86\\liboboe.so"
+      ]
+    }
+  }
+}
