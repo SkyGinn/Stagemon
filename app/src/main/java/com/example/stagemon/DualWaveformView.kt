@@ -137,7 +137,8 @@ class DualWaveformView @JvmOverloads constructor(
                 onSpeedChange?.invoke(0.0f)
                 val p = calculateProgress(event.x)
                 setProgress(p)
-                // Не вызываем onSeek здесь, только при движении
+                // Сразу устанавливаем позицию при нажатии
+                onSeek?.invoke(p)
                 return true
             }
             MotionEvent.ACTION_MOVE -> {
@@ -150,13 +151,9 @@ class DualWaveformView @JvmOverloads constructor(
                 lastX = currentX
                 lastTime = currentTime
 
-                val now = System.currentTimeMillis()
-                if (now - lastSeekTime > 80) {  // Увеличил интервал до 80мс
-                    lastSeekTime = now
-                    val p = calculateProgress(event.x)
-                    setProgress(p)
-                    onSeek?.invoke(p)
-                }
+                val p = calculateProgress(event.x)
+                setProgress(p)
+                onSeek?.invoke(p)
                 return true
             }
             MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
@@ -167,10 +164,10 @@ class DualWaveformView @JvmOverloads constructor(
                 val finalP = calculateProgress(event.x)
                 setProgress(finalP)
                 onSeek?.invoke(finalP)
-                // Небольшая задержка перед стартом чтобы позиция успела установиться
+                // Задержка перед стартом чтобы позиция успела установиться в нативном коде
                 postDelayed({
                     onStartAudio?.invoke()
-                }, 50)
+                }, 100)
                 return true
             }
         }
