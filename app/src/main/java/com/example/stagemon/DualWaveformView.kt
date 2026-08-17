@@ -137,8 +137,6 @@ class DualWaveformView @JvmOverloads constructor(
                 onSpeedChange?.invoke(0.0f)
                 val p = calculateProgress(event.x)
                 setProgress(p)
-                // Сразу устанавливаем позицию при нажатии
-                onSeek?.invoke(p)
                 return true
             }
             MotionEvent.ACTION_MOVE -> {
@@ -153,7 +151,7 @@ class DualWaveformView @JvmOverloads constructor(
 
                 val p = calculateProgress(event.x)
                 setProgress(p)
-                onSeek?.invoke(p)
+                // НЕ вызываем onSeek здесь - только визуальное обновление
                 return true
             }
             MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
