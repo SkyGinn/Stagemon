@@ -353,6 +353,18 @@ void OboeEngine::stop() {
 
 void OboeEngine::setPosition(int64_t position) {
     std::lock_guard<std::mutex> lock(mLock);
+    
+    // Отключаем вариспид при seek'е чтобы избежать конфликтов
+    if (mPlaybackSpeed != 1.0f) {
+        mPlaybackSpeed = 1.0f;
+        mFohVarispeedActive = false;
+        mMonVarispeedActive = false;
+        mFohVarispeedBuf.clear();
+        mMonVarispeedBuf.clear();
+        mFohVarispeedPhase = 0.0f;
+        mMonVarispeedPhase = 0.0f;
+    }
+    
     mSeekRequested = true;
     mSeekPosition = position;
     LOGD("Seek requested to: %ld", position);
@@ -540,12 +552,26 @@ oboe::DataCallbackResult OboeEngine::onAudioReady(oboe::AudioStream *stream, voi
         mSeekInProgress = true;
         mSeekFadeFrames = 0;
 
+        // Очищаем ВСЕ буферы включая вариспид
         mFohPcmBuffer.clear();
         mMonPcmBuffer.clear();
+        mFohVarispeedBuf.clear();
+        mMonVarispeedBuf.clear();
         mFohBufferPos = 0;
         mMonBufferPos = 0;
+        mFohVarispeedBufPos = 0;
+        mMonVarispeedBufPos = 0;
+        mFohVarispeedPhase = 0.0f;
+        mMonVarispeedPhase = 0.0f;
         mFohOutputEos = false;
         mMonOutputEos = false;
+        mFohInputEos = false;
+        mMonInputEos = false;
+
+        // Сбрасываем вариспид в нормальный режим
+        mPlaybackSpeed = 1.0f;
+        mFohVarispeedActive = false;
+        mMonVarispeedActive = false;
 
 
         if (mFohFd != -1) {
