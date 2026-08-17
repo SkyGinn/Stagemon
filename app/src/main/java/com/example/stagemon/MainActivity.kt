@@ -685,10 +685,22 @@ class MainActivity : AppCompatActivity() {
 
         dualWaveform.onScratchActive = { active -> }
 
+        // Убираем вариспид - теперь просто тишина при перемотке
         dualWaveform.onSpeedChange = { speed ->
-            Log.d("VARISPEED", "speed=$speed")
+            // Ничего не делаем - вариспид больше не нужен
+        }
+
+        dualWaveform.onStopAudio = {
+            Log.d("SCRATCH", "onStopAudio - останавливаем звук")
             if (enginePtr != 0L) {
-                setPlaybackSpeed(enginePtr, speed)
+                stopEngine(enginePtr)
+            }
+        }
+
+        dualWaveform.onStartAudio = {
+            Log.d("SCRATCH", "onStartAudio - запускаем звук с новой позиции")
+            if (enginePtr != 0L) {
+                startEngine(enginePtr)
             }
         }
 

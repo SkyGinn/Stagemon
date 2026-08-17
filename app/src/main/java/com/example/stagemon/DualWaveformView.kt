@@ -44,9 +44,12 @@ class DualWaveformView @JvmOverloads constructor(
     var onSeek: ((Float) -> Unit)? = null
     var onScratchActive: ((Boolean) -> Unit)? = null
     var onSpeedChange: ((Float) -> Unit)? = null
+    var onStopAudio: (() -> Unit)? = null
+    var onStartAudio: (() -> Unit)? = null
 
     private var lastX = 0f
     private var lastTime = 0L
+    private var isScratching = false
 
     private fun calculateProgress(x: Float): Float {
         val gap = 20f
@@ -126,7 +129,9 @@ class DualWaveformView @JvmOverloads constructor(
     override fun onTouchEvent(event: MotionEvent): Boolean {
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
+                isScratching = true
                 onScratchActive?.invoke(true)
+                onStopAudio?.invoke()  // Остановить звук сразу при нажатии
                 lastX = event.x
                 lastTime = event.eventTime
                 onSpeedChange?.invoke(0.0f)
@@ -155,8 +160,10 @@ class DualWaveformView @JvmOverloads constructor(
                 return true
             }
             MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+                isScratching = false
                 onScratchActive?.invoke(false)
                 onSpeedChange?.invoke(1.0f)
+                onStartAudio?.invoke()  // Запустить звук с новой позиции
                 return true
             }
         }
