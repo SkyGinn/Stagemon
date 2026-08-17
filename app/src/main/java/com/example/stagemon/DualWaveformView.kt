@@ -137,7 +137,7 @@ class DualWaveformView @JvmOverloads constructor(
                 onSpeedChange?.invoke(0.0f)
                 val p = calculateProgress(event.x)
                 setProgress(p)
-                onSeek?.invoke(p)
+                // Не вызываем onSeek здесь, только при движении
                 return true
             }
             MotionEvent.ACTION_MOVE -> {
@@ -151,7 +151,7 @@ class DualWaveformView @JvmOverloads constructor(
                 lastTime = currentTime
 
                 val now = System.currentTimeMillis()
-                if (now - lastSeekTime > 50) {
+                if (now - lastSeekTime > 80) {  // Увеличил интервал до 80мс
                     lastSeekTime = now
                     val p = calculateProgress(event.x)
                     setProgress(p)
@@ -163,7 +163,14 @@ class DualWaveformView @JvmOverloads constructor(
                 isScratching = false
                 onScratchActive?.invoke(false)
                 onSpeedChange?.invoke(1.0f)
-                onStartAudio?.invoke()  // Запустить звук с новой позиции
+                // Финальный вызов onSeek для точной позиции
+                val finalP = calculateProgress(event.x)
+                setProgress(finalP)
+                onSeek?.invoke(finalP)
+                // Небольшая задержка перед стартом чтобы позиция успела установиться
+                postDelayed({
+                    onStartAudio?.invoke()
+                }, 50)
                 return true
             }
         }
