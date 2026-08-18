@@ -400,94 +400,6 @@ std::string OboeEngine::getAudioDeviceInfo() const {
 
 bool OboeEngine::getNextSample(float &l, float &r, bool isFoh) {
     int fd = isFoh ? mFohFd : mMonFd;
-    bool &varispeedActive = isFoh ? mFohVarispeedActive : mMonVarispeedActive;
-
-    // ========== ВАРИСПИД ==========
-    if (varispeedActive) {
-        std::vector<float> &buf = isFoh ? mFohVarispeedBuf : mMonVarispeedBuf;
-        size_t &pos = isFoh ? mFohVarispeedBufPos : mMonVarispeedBufPos;
-        float &phase = isFoh ? mFohVarispeedPhase : mMonVarispeedPhase;
-
-        if (buf.empty() || (size_t)phase + 2 >= buf.size() / 2) {
-            buf.clear();
-            pos = 0;
-            phase = 0.0f;
-
-            const size_t chunkFrames = 4096;
-            uint16_t blockAlign = isFoh ? mFohBlockAlign : mMonBlockAlign;
-            size_t bytesPerFrame = blockAlign;
-            size_t chunkBytes = chunkFrames * bytesPerFrame;
-            void *aligned_mem = aligned_alloc(16, chunkBytes);
-            if (!aligned_mem) { l = r = 0.0f; return true; }
-            uint8_t *data = static_cast<uint8_t*>(aligned_mem);
-            ssize_t n = ::read(fd, data, chunkBytes);
-            LOGD("%s VARISPEED read n=%zd, pos=%ld", isFoh ? "FOH" : "MON", n, (long)lseek(fd, 0, SEEK_CUR) - n);
-            if (n <= 0) { free(aligned_mem); l = r = 0.0f; return true; }
-
-            uint16_t bps = isFoh ? mFohBitsPerSample : mMonBitsPerSample;
-            uint16_t fmt = isFoh ? mFohFormatTag : mMonFormatTag;
-            size_t frames = n / bytesPerFrame;
-            buf.resize(frames * 2);
-
-            for (size_t i = 0; i < frames; i++) {
-                size_t base = i * blockAlign;
-                if (bps == 16) {
-                    int16_t valL = static_cast<int16_t>(data[base] | (data[base + 1] << 8));
-                    buf[i * 2] = valL / 32768.0f;
-                    if (bytesPerFrame >= 4) {
-                        int16_t valR = static_cast<int16_t>(data[base + 2] | (data[base + 3] << 8));
-                        buf[i * 2 + 1] = valR / 32768.0f;
-                    } else buf[i * 2 + 1] = buf[i * 2];
-                } else if (bps == 24) {
-                    int32_t valL = (data[base] | (data[base + 1] << 8) | (data[base + 2] << 16));
-                    if (valL & 0x800000) valL |= 0xFF000000;
-                    buf[i * 2] = valL / 8388608.0f;
-                    if (bytesPerFrame >= 6) {
-                        int32_t valR = (data[base + 3] | (data[base + 4] << 8) | (data[base + 5] << 16));
-                        if (valR & 0x800000) valR |= 0xFF000000;
-                        buf[i * 2 + 1] = valR / 8388608.0f;
-                    } else buf[i * 2 + 1] = buf[i * 2];
-                } else if (bps == 32) {
-                    if (fmt == 3) {
-                        memcpy(&buf[i * 2], &data[base], sizeof(float));
-                        if (bytesPerFrame >= 8) memcpy(&buf[i * 2 + 1], &data[base + 4], sizeof(float));
-                        else buf[i * 2 + 1] = buf[i * 2];
-                        buf[i * 2] = std::max(-1.0f, std::min(1.0f, buf[i * 2]));
-                        buf[i * 2 + 1] = std::max(-1.0f, std::min(1.0f, buf[i * 2 + 1]));
-                    } else {
-                        int32_t valL = static_cast<int32_t>(data[base] | (data[base + 1] << 8) | (data[base + 2] << 16) | (data[base + 3] << 24));
-                        buf[i * 2] = valL / 2147483648.0f;
-                        if (bytesPerFrame >= 8) {
-                            int32_t valR = static_cast<int32_t>(data[base + 4] | (data[base + 5] << 8) | (data[base + 6] << 16) | (data[base + 7] << 24));
-                            buf[i * 2 + 1] = valR / 2147483648.0f;
-                        } else buf[i * 2 + 1] = buf[i * 2];
-                    }
-                }
-            }
-            free(aligned_mem);
-            if (buf.empty()) { l = r = 0.0f; return true; }
-        }
-
-        size_t maxIdx = buf.size() / 2;
-        if (maxIdx < 2) { l = r = 0.0f; return true; }
-
-        size_t idx0 = (size_t)phase;
-        float frac = phase - (float)idx0;
-        size_t idx1 = idx0 + 1;
-        if (idx1 >= maxIdx) idx1 = maxIdx - 1;
-
-        l = buf[idx0 * 2] + (buf[idx1 * 2] - buf[idx0 * 2]) * frac;
-        r = buf[idx0 * 2 + 1] + (buf[idx1 * 2 + 1] - buf[idx0 * 2 + 1]) * frac;
-        l = std::max(-1.0f, std::min(1.0f, l));
-        r = std::max(-1.0f, std::min(1.0f, r));
-
-        phase += mPlaybackSpeed;
-        if (phase >= (float)(maxIdx - 1)) {
-            buf.clear();
-            phase = 0.0f;
-        }
-        return true;
-    }
 
     // ========== ОБЫЧНЫЙ РЕЖИМ ==========
     std::vector<float> &buf = isFoh ? mFohPcmBuffer : mMonPcmBuffer;
@@ -588,8 +500,10 @@ oboe::DataCallbackResult OboeEngine::onAudioReady(oboe::AudioStream *stream, voi
 
         mFohOutputEos = false;
         mMonOutputEos = false;
+        mFohInputEos = false;
+        mMonInputEos = false;
 
-
+        // Устанавливаем позицию
         if (mFohFd != -1) {
             lseek(mFohFd, mSeekPosition + mFohDataOffset, SEEK_SET);
         }
@@ -705,29 +619,6 @@ oboe::DataCallbackResult OboeEngine::onAudioReady(oboe::AudioStream *stream, voi
     }
 
     return oboe::DataCallbackResult::Continue;
-}
-
-void OboeEngine::setPlaybackSpeed(float speed) {
-    float clamped = std::max(0.0f, std::min(3.0f, speed));
-    if (mPlaybackSpeed == clamped) return;
-    float old = mPlaybackSpeed;
-    mPlaybackSpeed = clamped;
-
-    if (old == 1.0f && clamped != 1.0f) {
-        mFohVarispeedActive = true;
-        mMonVarispeedActive = true;
-        mFohVarispeedBuf.clear();
-        mMonVarispeedBuf.clear();
-        mFohVarispeedPhase = 0.0f;
-        mMonVarispeedPhase = 0.0f;
-    } else if (old != 1.0f && clamped == 1.0f) {
-        mFohVarispeedActive = false;
-        mMonVarispeedActive = false;
-        mFohPcmBuffer.clear();
-        mMonPcmBuffer.clear();
-        mFohBufferPos = 0;
-        mMonBufferPos = 0;
-    }
 }
 
 void OboeEngine::generateMetronomeSamples(float *left, float *right, int numFrames) {
