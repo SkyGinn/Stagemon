@@ -683,7 +683,11 @@ class MainActivity : AppCompatActivity() {
 
         val dualWaveform = findViewById<DualWaveformView>(R.id.dualWaveform)
 
-        dualWaveform.onScratchActive = { active -> }
+        dualWaveform.onScratchActive = { active ->
+            if (enginePtr != 0L) {
+                setScratchActive(enginePtr, active)
+            }
+        }
 
         dualWaveform.onSpeedChange = { speed ->
             Log.d("VARISPEED", "speed=$speed")
@@ -2968,6 +2972,7 @@ class MainActivity : AppCompatActivity() {
         external fun getCurrentPosition(enginePtr: Long): Long
         external fun resetVuLevels(enginePtr: Long)
         external fun setPosition(enginePtr: Long, position: Long)
+        external fun setScratchActive(enginePtr: Long, active: Boolean)
 
         external fun getFohLength(enginePtr: Long): Long
         external fun isStreamOpen(enginePtr: Long): Boolean
