@@ -357,7 +357,13 @@ void OboeEngine::setPosition(int64_t position) {
     // Устанавливаем флаг seek - обработка будет в onAudioReady
     mSeekRequested = true;
     mSeekPosition = position;
+    mScratchActive = true;  // Включаем режим скретча для подавления шума
     LOGD("Seek requested to: %ld", position);
+}
+
+void OboeEngine::setScratchActive(bool active) {
+    mScratchActive = active;
+    LOGD("Scratch active: %d", active ? 1 : 0);
 }
 
 void OboeEngine::resetVuLevels() {
@@ -688,6 +694,14 @@ void OboeEngine::setPlaybackSpeed(float speed) {
     if (mPlaybackSpeed == clamped) return;
     float old = mPlaybackSpeed;
     mPlaybackSpeed = clamped;
+
+    // Если скорость не 1.0 - значит идёт перемотка, включаем режим скретча
+    if (clamped != 1.0f) {
+        mScratchActive = true;
+    } else {
+        // Возврат к нормальной скорости - выключаем скретч
+        mScratchActive = false;
+    }
 
     if (old == 1.0f && clamped != 1.0f) {
         mFohVarispeedActive = true;
@@ -1030,6 +1044,13 @@ JNIEXPORT void JNICALL Java_com_example_stagemon_MainActivity_setPosition(JNIEnv
     auto* engine = reinterpret_cast<OboeEngine*>(ptr);
     if (engine) {
         engine->setPosition(position);
+    }
+}
+
+JNIEXPORT void JNICALL Java_com_example_stagemon_MainActivity_setScratchActive(JNIEnv*, jobject, jlong ptr, jboolean active) {
+    auto* engine = reinterpret_cast<OboeEngine*>(ptr);
+    if (engine) {
+        engine->setScratchActive(active);
     }
 }
 

@@ -44,6 +44,8 @@ class DualWaveformView @JvmOverloads constructor(
     var onSeek: ((Float) -> Unit)? = null
     var onScratchActive: ((Boolean) -> Unit)? = null
     var onSpeedChange: ((Float) -> Unit)? = null
+    var onTouchStart: (() -> Unit)? = null
+    var onTouchEnd: (() -> Unit)? = null
 
     private var lastX = 0f
     private var lastTime = 0L
@@ -126,6 +128,7 @@ class DualWaveformView @JvmOverloads constructor(
     override fun onTouchEvent(event: MotionEvent): Boolean {
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
+                onTouchStart?.invoke()
                 onScratchActive?.invoke(true)
                 lastX = event.x
                 lastTime = event.eventTime
@@ -155,6 +158,7 @@ class DualWaveformView @JvmOverloads constructor(
                 return true
             }
             MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+                onTouchEnd?.invoke()
                 onScratchActive?.invoke(false)
                 onSpeedChange?.invoke(1.0f)
                 return true
