@@ -357,7 +357,6 @@ void OboeEngine::setPosition(int64_t position) {
     // Устанавливаем флаг seek - обработка будет в onAudioReady
     mSeekRequested = true;
     mSeekPosition = position;
-    mScratchActive = true;  // Включаем режим скретча для подавления шума
     LOGD("Seek requested to: %ld", position);
 }
 
@@ -547,6 +546,7 @@ oboe::DataCallbackResult OboeEngine::onAudioReady(oboe::AudioStream *stream, voi
         mSeekRequested = false;
         mSeekInProgress = true;
         mSeekFadeFrames = 0;
+        mScratchActive = true;  // Включаем режим тишины ДО начала перемотки
 
         // Отключаем varispeed
         mFohVarispeedActive = false;
@@ -618,13 +618,17 @@ oboe::DataCallbackResult OboeEngine::onAudioReady(oboe::AudioStream *stream, voi
     for (int i = 0; i < numFrames; ++i) {
         float fl = 0.0f, fr = 0.0f, ml = 0.0f, mr = 0.0f;
 
-        if (!mFohOutputEos) getNextSample(fl, fr, true);
+        // Если скретч активен - генерируем тишину вместо сэмплов
+        if (!mScratchActive) {
+            if (!mFohOutputEos) getNextSample(fl, fr, true);
+            if (!mMonOutputEos) getNextSample(ml, mr, false);
+        }
+        
         fl *= mVolFoh * ramp;
         fr *= mVolFoh * ramp;
         currentFohLeft += fabs(fl);
         currentFohRight += fabs(fr);
 
-        if (!mMonOutputEos) getNextSample(ml, mr, false);
         ml *= mVolMon * ramp;
         mr *= mVolMon * ramp;
         currentMonLeft += fabs(ml);
@@ -684,6 +688,7 @@ oboe::DataCallbackResult OboeEngine::onAudioReady(oboe::AudioStream *stream, voi
 
     if (mSeekInProgress && mSeekFadeFrames >= FADE_FRAMES) {
         mSeekInProgress = false;
+        mScratchActive = false;  // Выключаем режим тишины только после завершения fade-in
     }
 
     return oboe::DataCallbackResult::Continue;
@@ -698,19 +703,15 @@ void OboeEngine::setPlaybackSpeed(float speed) {
     // Если скорость не 1.0 - значит идёт перемотка, включаем режим скретча
     if (clamped != 1.0f) {
         mScratchActive = true;
-    } else {
-        // Возврат к нормальной скорости - выключаем скретч
-        mScratchActive = false;
-    }
-
-    if (old == 1.0f && clamped != 1.0f) {
         mFohVarispeedActive = true;
         mMonVarispeedActive = true;
         mFohVarispeedBuf.clear();
         mMonVarispeedBuf.clear();
         mFohVarispeedPhase = 0.0f;
         mMonVarispeedPhase = 0.0f;
-    } else if (old != 1.0f && clamped == 1.0f) {
+    } else {
+        // Возврат к нормальной скорости - выключаем скретч
+        mScratchActive = false;
         mFohVarispeedActive = false;
         mMonVarispeedActive = false;
         mFohPcmBuffer.clear();

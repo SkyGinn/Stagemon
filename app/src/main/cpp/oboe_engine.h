@@ -77,6 +77,7 @@ public:
     void resetMetronome() { mMetronomeResetRequested = true; mMetronomeHolding = false; }
     void setMetronomeStrongFreq(int freq) { mMetronomeStrongFreq = freq; }
     void setMetronomeWeakFreq(int freq) { mMetronomeWeakFreq = freq; }
+    void setScratchActive(bool active);
     oboe::DataCallbackResult onAudioReady(oboe::AudioStream *stream, void *audioData, int32_t numFrames) override;
 
 private:
