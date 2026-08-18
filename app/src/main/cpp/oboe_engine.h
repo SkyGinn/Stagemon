@@ -48,8 +48,6 @@ public:
     uint16_t getMonBitDepth() const { return mMonBitsPerSample; }
     void setMetronomeWaveform(int type);
     void setMetronomeClickDuration(int ms);
-    void setPlaybackSpeed(float speed);
-    float getPlaybackSpeed() const { return mPlaybackSpeed; }
     bool openStream(int preferredFormatIndex = 1);
     void closeStream();
     void resetTrackPositions();
@@ -87,15 +85,6 @@ private:
     int mChannelCount = 0;
     int mDeviceId = -1;
     std::string mAudioDeviceName;
-    std::vector<float> mFohVarispeedBuf;
-    std::vector<float> mMonVarispeedBuf;
-    size_t mFohVarispeedBufPos = 0;
-    size_t mMonVarispeedBufPos = 0;
-    float mFohVarispeedPhase = 0.0f;
-    float mMonVarispeedPhase = 0.0f;
-    bool mFohVarispeedActive = false;
-    bool mMonVarispeedActive = false;
-    float mPlaybackSpeed = 1.0f;
     bool mSeekRequested = false;
     int64_t mSeekPosition = 0;
     std::atomic<bool> mSeekInProgress{false};
