@@ -1,0 +1,5 @@
+# ninja log v5
+2	1491	7864789673238341	CMakeFiles/stagemon.dir/wav_decoder.cpp.o	9ffc872a2da8a109
+5	1777	7864789676068334	CMakeFiles/stagemon.dir/audio_engine.cpp.o	d573a082952bbc15
+11	1514	7864790612283952	CMakeFiles/stagemon.dir/wav_decoder.cpp.o	b71942393214e1bd
+14	1778	7864790614887179	CMakeFiles/stagemon.dir/audio_engine.cpp.o	d77665a3e93b5c0c

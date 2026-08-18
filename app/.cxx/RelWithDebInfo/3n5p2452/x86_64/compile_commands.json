@@ -1,0 +1,12 @@
+[
+{
+  "directory": "C:/Users/User/AndroidStudioProjects/Stagemon/app/.cxx/RelWithDebInfo/3n5p2452/x86_64",
+  "command": "G:\\Android\\Sdk\\ndk\\29.0.14206865\\toolchains\\llvm\\prebuilt\\windows-x86_64\\bin\\clang++.exe --target=x86_64-none-linux-android31 --sysroot=G:/Android/Sdk/ndk/29.0.14206865/toolchains/llvm/prebuilt/windows-x86_64/sysroot -Dstagemon_EXPORTS -isystem C:/Users/User/.gradle/caches/8.13/transforms/dfeae6252926bbfcabea9a70b959fc8b/transformed/jetified-oboe-1.10.0/prefab/modules/oboe/include -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security  -std=c++17 -O2 -g -DNDEBUG -fPIC -std=c++17 -o CMakeFiles\\stagemon.dir\\oboe_engine.cpp.o -c C:\\Users\\User\\AndroidStudioProjects\\Stagemon\\app\\src\\main\\cpp\\oboe_engine.cpp",
+  "file": "C:\\Users\\User\\AndroidStudioProjects\\Stagemon\\app\\src\\main\\cpp\\oboe_engine.cpp"
+},
+{
+  "directory": "C:/Users/User/AndroidStudioProjects/Stagemon/app/.cxx/RelWithDebInfo/3n5p2452/x86_64",
+  "command": "G:\\Android\\Sdk\\ndk\\29.0.14206865\\toolchains\\llvm\\prebuilt\\windows-x86_64\\bin\\clang++.exe --target=x86_64-none-linux-android31 --sysroot=G:/Android/Sdk/ndk/29.0.14206865/toolchains/llvm/prebuilt/windows-x86_64/sysroot -Dstagemon_EXPORTS -isystem C:/Users/User/.gradle/caches/8.13/transforms/dfeae6252926bbfcabea9a70b959fc8b/transformed/jetified-oboe-1.10.0/prefab/modules/oboe/include -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security  -std=c++17 -O2 -g -DNDEBUG -fPIC -std=c++17 -o CMakeFiles\\stagemon.dir\\MetronomeEngine.cpp.o -c C:\\Users\\User\\AndroidStudioProjects\\Stagemon\\app\\src\\main\\cpp\\MetronomeEngine.cpp",
+  "file": "C:\\Users\\User\\AndroidStudioProjects\\Stagemon\\app\\src\\main\\cpp\\MetronomeEngine.cpp"
+}
+]

@@ -351,11 +351,38 @@ void OboeEngine::stop() {
     LOGD("stop() завершён");
 }
 
-void OboeEngine::setPosition(int64_t position) {
+void OboeEngine::setPosition(int64_t positionBytes) {
+    // Блокируем мьютекс, чтобы onAudioReady не мог читать данные во время перемотки
     std::lock_guard<std::mutex> lock(mLock);
-    mSeekRequested = true;
-    mSeekPosition = position;
-    LOGD("Seek requested to: %ld", position);
+
+    // 1. Очищаем вариспид буферы и сбрасываем их состояния
+    mFohVarispeedBuf.clear();
+    mMonVarispeedBuf.clear();
+    mFohVarispeedBufPos = 0;
+    mMonVarispeedBufPos = 0;
+    mFohVarispeedPhase = 0.0f;
+    mMonVarispeedPhase = 0.0f;
+
+    // 2. Очищаем PCM буферы (если они есть в вашем коде как векторы/буферы)
+    // Если у вас они просто указывают на память, то достаточно сбросить позицию
+    if (!mFohPcmBuffer.empty()) mFohPcmBuffer.clear();
+    if (!mMonPcmBuffer.empty()) mMonPcmBuffer.clear();
+
+    // Сбрасываем позиции чтения
+    mFohBufferPos = positionBytes;
+    mMonBufferPos = positionBytes;
+
+    // 3. Выполняем физическую перемотку файлов (lseek)
+    // Так как мы захватили mLock, поток onAudioReady сейчас ждет и не читает файл
+    if (mFohFd >= 0) {
+        lseek(mFohFd, positionBytes, SEEK_SET);
+    }
+    if (mMonFd >= 0) {
+        lseek(mMonFd, positionBytes, SEEK_SET);
+    }
+
+    // Лог для отладки (можно убрать потом)
+    // __android_log_print(ANDROID_LOG_DEBUG, "OboeEngine", "Seek completed to: %lld", (long long)positionBytes);
 }
 
 void OboeEngine::resetVuLevels() {
@@ -366,6 +393,7 @@ void OboeEngine::resetVuLevels() {
     mCurrentMonRight = 0.0f;
     LOGD("VU уровни сброшены в ноль");
 }
+
 std::string OboeEngine::getAudioDeviceInfo() const {
     return mAudioDeviceName;
 }
@@ -452,11 +480,24 @@ oboe::DataCallbackResult OboeEngine::onAudioReady(oboe::AudioStream *stream, voi
         mSeekInProgress = true;
         mSeekFadeFrames = 0;
 
-        // Очищаем буферы
+        // Сначала отключаем varispeed, чтобы остановить чтение буферов
+        mFohVarispeedActive = false;
+        mMonVarispeedActive = false;
+
+        // Очищаем PCM буферы
         mFohPcmBuffer.clear();
         mMonPcmBuffer.clear();
         mFohBufferPos = 0;
         mMonBufferPos = 0;
+
+        // Очищаем varispeed буферы и сбрасываем их состояния
+        mFohVarispeedBuf.clear();
+        mMonVarispeedBuf.clear();
+        mFohVarispeedBufPos = 0;
+        mMonVarispeedBufPos = 0;
+        mFohVarispeedPhase = 0.0f;
+        mMonVarispeedPhase = 0.0f;
+
         mFohOutputEos = false;
         mMonOutputEos = false;
         mFohInputEos = false;
@@ -729,7 +770,7 @@ Java_com_example_stagemon_MainActivity_extractPeaks(
     }
 
     off_t current_pos = lseek(fd, offset, SEEK_SET);
-    if (current_pos == (off_t)-1) return env->NewFloatArray(0);
+    if (current_pos == (off_t) - 1) return env->NewFloatArray(0);
 
     int bytes_per_sample = bits_per_sample / 8;
     if (bytes_per_sample == 0) bytes_per_sample = 2;
@@ -749,7 +790,7 @@ Java_com_example_stagemon_MainActivity_extractPeaks(
 
     // Читаем чанками, чтобы не выделять гигантские буферы в памяти
     size_t max_chunk_samples = 500000;
-    size_t chunk_samples = std::min((size_t)samples_per_peak, max_chunk_samples);
+    size_t chunk_samples = std::min((size_t) samples_per_peak, max_chunk_samples);
     std::vector<uint8_t> buffer(chunk_samples * bytes_per_sample);
     std::vector<float> peaks(num_peaks, 0.0f);
 
@@ -758,36 +799,37 @@ Java_com_example_stagemon_MainActivity_extractPeaks(
         jlong samples_to_read = samples_per_peak;
 
         while (samples_to_read > 0) {
-            size_t to_read = std::min((size_t)samples_to_read, chunk_samples);
+            size_t to_read = std::min((size_t) samples_to_read, chunk_samples);
             ssize_t bytes_read = read(fd, buffer.data(), to_read * bytes_per_sample);
             if (bytes_read <= 0) break;
 
             size_t samples_read = bytes_read / bytes_per_sample;
 
             if (is_float && bits_per_sample == 32) {
-                float* f_buf = reinterpret_cast<float*>(buffer.data());
+                float *f_buf = reinterpret_cast<float *>(buffer.data());
                 for (size_t s = 0; s < samples_read; ++s) {
                     float val = std::abs(f_buf[s]);
                     if (val > peak) peak = val;
                 }
             } else if (bits_per_sample == 16) {
-                int16_t* i_buf = reinterpret_cast<int16_t*>(buffer.data());
+                int16_t *i_buf = reinterpret_cast<int16_t *>(buffer.data());
                 for (size_t s = 0; s < samples_read; ++s) {
-                    float val = std::abs((float)i_buf[s]);
+                    float val = std::abs((float) i_buf[s]);
                     if (val > peak) peak = val;
                 }
             } else if (bits_per_sample == 24) {
-                uint8_t* b_buf = buffer.data();
+                uint8_t *b_buf = buffer.data();
                 for (size_t s = 0; s < samples_read; ++s) {
-                    int32_t val = (b_buf[s*3]) | (b_buf[s*3 + 1] << 8) | (b_buf[s*3 + 2] << 16);
+                    int32_t val =
+                            (b_buf[s * 3]) | (b_buf[s * 3 + 1] << 8) | (b_buf[s * 3 + 2] << 16);
                     if (val & 0x800000) val |= 0xFF000000; // Sign extension
-                    float abs_val = std::abs((float)val);
+                    float abs_val = std::abs((float) val);
                     if (abs_val > peak) peak = abs_val;
                 }
             } else if (bits_per_sample == 32) {
-                int32_t* i_buf = reinterpret_cast<int32_t*>(buffer.data());
+                int32_t *i_buf = reinterpret_cast<int32_t *>(buffer.data());
                 for (size_t s = 0; s < samples_read; ++s) {
-                    float val = std::abs((float)i_buf[s]);
+                    float val = std::abs((float) i_buf[s]);
                     if (val > peak) peak = val;
                 }
             }
@@ -804,209 +846,271 @@ Java_com_example_stagemon_MainActivity_extractPeaks(
     return result;
 }
 
-JNIEXPORT jlong JNICALL Java_com_example_stagemon_MainActivity_createEngine(JNIEnv*, jobject) {
+JNIEXPORT jlong JNICALL Java_com_example_stagemon_MainActivity_createEngine(JNIEnv *, jobject) {
     return reinterpret_cast<jlong>(new OboeEngine());
 }
 
-JNIEXPORT void JNICALL Java_com_example_stagemon_MainActivity_destroyEngine(JNIEnv*, jobject, jlong ptr) {
-delete reinterpret_cast<OboeEngine*>(ptr);
+JNIEXPORT void JNICALL
+Java_com_example_stagemon_MainActivity_destroyEngine(JNIEnv *, jobject, jlong ptr) {
+    delete reinterpret_cast<OboeEngine *>(ptr);
 }
 
-JNIEXPORT jboolean JNICALL Java_com_example_stagemon_MainActivity_startEngine(JNIEnv*, jobject, jlong ptr) {
-return reinterpret_cast<OboeEngine*>(ptr)->start();
+JNIEXPORT jboolean JNICALL
+Java_com_example_stagemon_MainActivity_startEngine(JNIEnv *, jobject, jlong ptr) {
+    return reinterpret_cast<OboeEngine *>(ptr)->start();
 }
 
-JNIEXPORT void JNICALL Java_com_example_stagemon_MainActivity_stopEngine(JNIEnv*, jobject, jlong ptr) {
-reinterpret_cast<OboeEngine*>(ptr)->stop();
+JNIEXPORT void JNICALL
+Java_com_example_stagemon_MainActivity_stopEngine(JNIEnv *, jobject, jlong ptr) {
+    reinterpret_cast<OboeEngine *>(ptr)->stop();
 }
 
-JNIEXPORT jboolean JNICALL Java_com_example_stagemon_MainActivity_isPlaying(JNIEnv*, jobject, jlong ptr) {
-return reinterpret_cast<OboeEngine*>(ptr)->isPlaying();
+JNIEXPORT jboolean JNICALL
+Java_com_example_stagemon_MainActivity_isPlaying(JNIEnv *, jobject, jlong ptr) {
+    return reinterpret_cast<OboeEngine *>(ptr)->isPlaying();
 }
 
-JNIEXPORT void JNICALL Java_com_example_stagemon_MainActivity_setVolumes(JNIEnv*, jobject, jlong ptr, jfloat v1, jfloat v2) {
-reinterpret_cast<OboeEngine*>(ptr)->setVolumes(v1, v2);
+JNIEXPORT void JNICALL
+Java_com_example_stagemon_MainActivity_setVolumes(JNIEnv *, jobject, jlong ptr, jfloat v1,
+                                                  jfloat v2) {
+    reinterpret_cast<OboeEngine *>(ptr)->setVolumes(v1, v2);
 }
 
-JNIEXPORT jstring JNICALL Java_com_example_stagemon_MainActivity_getAudioDeviceInfo(JNIEnv* env, jobject, jlong ptr) {
-std::string s = reinterpret_cast<OboeEngine*>(ptr)->getAudioDeviceInfo();
-return env->NewStringUTF(s.c_str());
+JNIEXPORT jstring JNICALL
+Java_com_example_stagemon_MainActivity_getAudioDeviceInfo(JNIEnv *env, jobject, jlong ptr) {
+    std::string s = reinterpret_cast<OboeEngine *>(ptr)->getAudioDeviceInfo();
+    return env->NewStringUTF(s.c_str());
 }
 
-JNIEXPORT void JNICALL Java_com_example_stagemon_MainActivity_setDeviceId(JNIEnv*, jobject, jlong ptr, jint id) {
-reinterpret_cast<OboeEngine*>(ptr)->setDeviceId(id);
+JNIEXPORT void JNICALL
+Java_com_example_stagemon_MainActivity_setDeviceId(JNIEnv *, jobject, jlong ptr, jint id) {
+    reinterpret_cast<OboeEngine *>(ptr)->setDeviceId(id);
 }
 
-JNIEXPORT void JNICALL Java_com_example_stagemon_MainActivity_setPairsSwap(JNIEnv*, jobject, jlong ptr, jboolean swap) {
-reinterpret_cast<OboeEngine*>(ptr)->setPairsSwap(swap);
+JNIEXPORT void JNICALL
+Java_com_example_stagemon_MainActivity_setPairsSwap(JNIEnv *, jobject, jlong ptr, jboolean swap) {
+    reinterpret_cast<OboeEngine *>(ptr)->setPairsSwap(swap);
 }
 
 JNIEXPORT jboolean JNICALL Java_com_example_stagemon_MainActivity_00024Companion_checkFormatSupport(
-        JNIEnv*, jobject, jint deviceId, jint sampleRate, jint formatCode) {
-oboe::AudioFormat format;
-switch (formatCode) {
-case 1: format = oboe::AudioFormat::I16; break;
-case 2: format = oboe::AudioFormat::I24; break;
-case 3: format = oboe::AudioFormat::I32; break;
-case 4: format = oboe::AudioFormat::Float; break;
-default: return false;
+        JNIEnv *, jobject, jint deviceId, jint sampleRate, jint formatCode) {
+    oboe::AudioFormat format;
+    switch (formatCode) {
+        case 1:
+            format = oboe::AudioFormat::I16;
+            break;
+        case 2:
+            format = oboe::AudioFormat::I24;
+            break;
+        case 3:
+            format = oboe::AudioFormat::I32;
+            break;
+        case 4:
+            format = oboe::AudioFormat::Float;
+            break;
+        default:
+            return false;
+    }
+
+    OboeEngine *engine = new OboeEngine();
+    bool result = engine->checkFormatSupport(deviceId, sampleRate, format);
+    delete engine;
+    return result;
 }
 
-OboeEngine* engine = new OboeEngine();
-bool result = engine->checkFormatSupport(deviceId, sampleRate, format);
-delete engine;
-return result;
+JNIEXPORT void JNICALL
+Java_com_example_stagemon_MainActivity_setChannelRouting(JNIEnv *, jobject, jlong ptr, jint fohL,
+                                                         jint fohR, jint monL, jint monR) {
+    reinterpret_cast<OboeEngine *>(ptr)->setChannelRouting(fohL, fohR, monL, monR);
 }
 
-JNIEXPORT void JNICALL Java_com_example_stagemon_MainActivity_setChannelRouting(JNIEnv*, jobject, jlong ptr, jint fohL, jint fohR, jint monL, jint monR) {
-    reinterpret_cast<OboeEngine*>(ptr)->setChannelRouting(fohL, fohR, monL, monR);
+JNIEXPORT jfloat JNICALL
+Java_com_example_stagemon_MainActivity_getFohLeft(JNIEnv *, jobject, jlong ptr) {
+    return reinterpret_cast<OboeEngine *>(ptr)->getCurrentFohLeft();
 }
 
-JNIEXPORT jfloat JNICALL Java_com_example_stagemon_MainActivity_getFohLeft(JNIEnv*, jobject, jlong ptr) {
-    return reinterpret_cast<OboeEngine*>(ptr)->getCurrentFohLeft();
+JNIEXPORT jfloat JNICALL
+Java_com_example_stagemon_MainActivity_getFohRight(JNIEnv *, jobject, jlong ptr) {
+    return reinterpret_cast<OboeEngine *>(ptr)->getCurrentFohRight();
 }
 
-JNIEXPORT jfloat JNICALL Java_com_example_stagemon_MainActivity_getFohRight(JNIEnv*, jobject, jlong ptr) {
-    return reinterpret_cast<OboeEngine*>(ptr)->getCurrentFohRight();
+JNIEXPORT jfloat JNICALL
+Java_com_example_stagemon_MainActivity_getMonLeft(JNIEnv *, jobject, jlong ptr) {
+    return reinterpret_cast<OboeEngine *>(ptr)->getCurrentMonLeft();
 }
 
-JNIEXPORT jfloat JNICALL Java_com_example_stagemon_MainActivity_getMonLeft(JNIEnv*, jobject, jlong ptr) {
-    return reinterpret_cast<OboeEngine*>(ptr)->getCurrentMonLeft();
+JNIEXPORT jfloat JNICALL
+Java_com_example_stagemon_MainActivity_getMonRight(JNIEnv *, jobject, jlong ptr) {
+    return reinterpret_cast<OboeEngine *>(ptr)->getCurrentMonRight();
 }
 
-JNIEXPORT jfloat JNICALL Java_com_example_stagemon_MainActivity_getMonRight(JNIEnv*, jobject, jlong ptr) {
-    return reinterpret_cast<OboeEngine*>(ptr)->getCurrentMonRight();
-}
-
-JNIEXPORT void JNICALL Java_com_example_stagemon_MainActivity_resetVuLevels(JNIEnv*, jobject, jlong ptr) {
-    auto* engine = reinterpret_cast<OboeEngine*>(ptr);
+JNIEXPORT void JNICALL
+Java_com_example_stagemon_MainActivity_resetVuLevels(JNIEnv *, jobject, jlong ptr) {
+    auto *engine = reinterpret_cast<OboeEngine *>(ptr);
     if (engine) {
         engine->resetVuLevels();
     }
 }
-JNIEXPORT jlong JNICALL Java_com_example_stagemon_MainActivity_getCurrentPosition(JNIEnv*, jobject, jlong ptr) {
-    auto* engine = reinterpret_cast<OboeEngine*>(ptr);
+JNIEXPORT jlong JNICALL
+Java_com_example_stagemon_MainActivity_getCurrentPosition(JNIEnv *, jobject, jlong ptr) {
+    auto *engine = reinterpret_cast<OboeEngine *>(ptr);
     if (engine) {
         return engine->getCurrentPosition();  // вызываем метод класса
     }
     return 0L;
 }
 
-JNIEXPORT jlong JNICALL Java_com_example_stagemon_MainActivity_getFohLength(JNIEnv*, jobject, jlong ptr) {
-    auto* engine = reinterpret_cast<OboeEngine*>(ptr);
+JNIEXPORT jlong JNICALL
+Java_com_example_stagemon_MainActivity_getFohLength(JNIEnv *, jobject, jlong ptr) {
+    auto *engine = reinterpret_cast<OboeEngine *>(ptr);
     if (engine) {
         return engine->getFohLength();
     }
     return 0L;
 }
 
-JNIEXPORT void JNICALL Java_com_example_stagemon_MainActivity_setPosition(JNIEnv*, jobject, jlong ptr, jlong position) {
-    auto* engine = reinterpret_cast<OboeEngine*>(ptr);
+JNIEXPORT void JNICALL
+Java_com_example_stagemon_MainActivity_setPosition(JNIEnv *, jobject, jlong ptr, jlong position) {
+    auto *engine = reinterpret_cast<OboeEngine *>(ptr);
     if (engine) {
         engine->setPosition(position);
     }
 }
 
-JNIEXPORT jboolean JNICALL Java_com_example_stagemon_MainActivity_isStreamOpen(JNIEnv*, jobject, jlong ptr) {
-    auto* engine = reinterpret_cast<OboeEngine*>(ptr);
+JNIEXPORT jboolean JNICALL
+Java_com_example_stagemon_MainActivity_isStreamOpen(JNIEnv *, jobject, jlong ptr) {
+    auto *engine = reinterpret_cast<OboeEngine *>(ptr);
     return engine->isStreamOpen();
 }
 
-JNIEXPORT jboolean JNICALL Java_com_example_stagemon_MainActivity_openStream(JNIEnv*, jobject, jlong ptr, jint deviceId, jint formatIndex) {
-    auto* engine = reinterpret_cast<OboeEngine*>(ptr);
+JNIEXPORT jboolean JNICALL
+Java_com_example_stagemon_MainActivity_openStream(JNIEnv *, jobject, jlong ptr, jint deviceId,
+                                                  jint formatIndex) {
+    auto *engine = reinterpret_cast<OboeEngine *>(ptr);
     engine->setDeviceId(deviceId);
     return engine->openStream(formatIndex);
 }
 
 // ========== JNI ДЛЯ МЕТРОНОМА ==========
-JNIEXPORT void JNICALL Java_com_example_stagemon_MainActivity_00024Companion_setMetronomeEnabled(JNIEnv*, jobject, jlong ptr, jboolean enabled) {
-    auto* engine = reinterpret_cast<OboeEngine*>(ptr);
+JNIEXPORT void JNICALL
+Java_com_example_stagemon_MainActivity_00024Companion_setMetronomeEnabled(JNIEnv *, jobject,
+                                                                          jlong ptr,
+                                                                          jboolean enabled) {
+    auto *engine = reinterpret_cast<OboeEngine *>(ptr);
     if (engine) engine->setMetronomeEnabled(enabled);
 }
 
-JNIEXPORT void JNICALL Java_com_example_stagemon_MainActivity_00024Companion_setMetronomeBpm(JNIEnv*, jobject, jlong ptr, jint bpm) {
-    auto* engine = reinterpret_cast<OboeEngine*>(ptr);
+JNIEXPORT void JNICALL
+Java_com_example_stagemon_MainActivity_00024Companion_setMetronomeBpm(JNIEnv *, jobject, jlong ptr,
+                                                                      jint bpm) {
+    auto *engine = reinterpret_cast<OboeEngine *>(ptr);
     if (engine) engine->setMetronomeBpm(bpm);
 }
 
-JNIEXPORT void JNICALL Java_com_example_stagemon_MainActivity_00024Companion_setMetronomeVolume(JNIEnv*, jobject, jlong ptr, jfloat volume) {
-    auto* engine = reinterpret_cast<OboeEngine*>(ptr);
+JNIEXPORT void JNICALL
+Java_com_example_stagemon_MainActivity_00024Companion_setMetronomeVolume(JNIEnv *, jobject,
+                                                                         jlong ptr, jfloat volume) {
+    auto *engine = reinterpret_cast<OboeEngine *>(ptr);
     if (engine) engine->setMetronomeVolume(volume);
 }
 
-JNIEXPORT void JNICALL Java_com_example_stagemon_MainActivity_00024Companion_setMetronomeChannel(JNIEnv*, jobject, jlong ptr, jint mode) {
-    auto* engine = reinterpret_cast<OboeEngine*>(ptr);
+JNIEXPORT void JNICALL
+Java_com_example_stagemon_MainActivity_00024Companion_setMetronomeChannel(JNIEnv *, jobject,
+                                                                          jlong ptr, jint mode) {
+    auto *engine = reinterpret_cast<OboeEngine *>(ptr);
     if (engine) engine->setMetronomeChannel(mode);
 }
 
-JNIEXPORT void JNICALL Java_com_example_stagemon_MainActivity_00024Companion_setMetronomeHolding(JNIEnv*, jobject, jlong ptr, jboolean holding) {
-    auto* engine = reinterpret_cast<OboeEngine*>(ptr);
+JNIEXPORT void JNICALL
+Java_com_example_stagemon_MainActivity_00024Companion_setMetronomeHolding(JNIEnv *, jobject,
+                                                                          jlong ptr,
+                                                                          jboolean holding) {
+    auto *engine = reinterpret_cast<OboeEngine *>(ptr);
     if (engine) engine->setMetronomeHolding(holding);
 }
 
-JNIEXPORT void JNICALL Java_com_example_stagemon_MainActivity_00024Companion_resetMetronome(JNIEnv*, jobject, jlong ptr) {
-    auto* engine = reinterpret_cast<OboeEngine*>(ptr);
+JNIEXPORT void JNICALL
+Java_com_example_stagemon_MainActivity_00024Companion_resetMetronome(JNIEnv *, jobject, jlong ptr) {
+    auto *engine = reinterpret_cast<OboeEngine *>(ptr);
     if (engine) engine->resetMetronome();
 }
 
-JNIEXPORT void JNICALL Java_com_example_stagemon_MainActivity_00024Companion_setMetronomeStrongFreq(JNIEnv*, jobject, jlong ptr, jint freq) {
-    auto* engine = reinterpret_cast<OboeEngine*>(ptr);
+JNIEXPORT void JNICALL
+Java_com_example_stagemon_MainActivity_00024Companion_setMetronomeStrongFreq(JNIEnv *, jobject,
+                                                                             jlong ptr, jint freq) {
+    auto *engine = reinterpret_cast<OboeEngine *>(ptr);
     if (engine) engine->setMetronomeStrongFreq(freq);
 }
 
-JNIEXPORT void JNICALL Java_com_example_stagemon_MainActivity_00024Companion_setMetronomeWeakFreq(JNIEnv*, jobject, jlong ptr, jint freq) {
-    auto* engine = reinterpret_cast<OboeEngine*>(ptr);
+JNIEXPORT void JNICALL
+Java_com_example_stagemon_MainActivity_00024Companion_setMetronomeWeakFreq(JNIEnv *, jobject,
+                                                                           jlong ptr, jint freq) {
+    auto *engine = reinterpret_cast<OboeEngine *>(ptr);
     if (engine) engine->setMetronomeWeakFreq(freq);
 }
 
 // ========== НОВЫЕ JNI МЕТОДЫ ДЛЯ МЕТРОНОМА ==========
-JNIEXPORT void JNICALL Java_com_example_stagemon_MainActivity_00024Companion_setMetronomeWaveform(JNIEnv*, jobject, jlong ptr, jint type) {
-    auto* engine = reinterpret_cast<OboeEngine*>(ptr);
+JNIEXPORT void JNICALL
+Java_com_example_stagemon_MainActivity_00024Companion_setMetronomeWaveform(JNIEnv *, jobject,
+                                                                           jlong ptr, jint type) {
+    auto *engine = reinterpret_cast<OboeEngine *>(ptr);
     if (engine) engine->setMetronomeWaveform(type);
 }
 
-JNIEXPORT void JNICALL Java_com_example_stagemon_MainActivity_00024Companion_setMetronomeClickDuration(JNIEnv*, jobject, jlong ptr, jint ms) {
-    auto* engine = reinterpret_cast<OboeEngine*>(ptr);
+JNIEXPORT void JNICALL
+Java_com_example_stagemon_MainActivity_00024Companion_setMetronomeClickDuration(JNIEnv *, jobject,
+                                                                                jlong ptr,
+                                                                                jint ms) {
+    auto *engine = reinterpret_cast<OboeEngine *>(ptr);
     if (engine) engine->setMetronomeClickDuration(ms);
 }
 
-JNIEXPORT jint JNICALL Java_com_example_stagemon_MainActivity_getFohSampleRate(JNIEnv*, jobject, jlong ptr) {
-    return reinterpret_cast<OboeEngine*>(ptr)->getFohSampleRate();
+JNIEXPORT jint JNICALL
+Java_com_example_stagemon_MainActivity_getFohSampleRate(JNIEnv *, jobject, jlong ptr) {
+    return reinterpret_cast<OboeEngine *>(ptr)->getFohSampleRate();
 }
-JNIEXPORT jint JNICALL Java_com_example_stagemon_MainActivity_getFohBitDepth(JNIEnv*, jobject, jlong ptr) {
-    return reinterpret_cast<OboeEngine*>(ptr)->getFohBitDepth();
+JNIEXPORT jint JNICALL
+Java_com_example_stagemon_MainActivity_getFohBitDepth(JNIEnv *, jobject, jlong ptr) {
+    return reinterpret_cast<OboeEngine *>(ptr)->getFohBitDepth();
 }
-JNIEXPORT jint JNICALL Java_com_example_stagemon_MainActivity_getMonSampleRate(JNIEnv*, jobject, jlong ptr) {
-    return reinterpret_cast<OboeEngine*>(ptr)->getMonSampleRate();
+JNIEXPORT jint JNICALL
+Java_com_example_stagemon_MainActivity_getMonSampleRate(JNIEnv *, jobject, jlong ptr) {
+    return reinterpret_cast<OboeEngine *>(ptr)->getMonSampleRate();
 }
-JNIEXPORT jint JNICALL Java_com_example_stagemon_MainActivity_getMonBitDepth(JNIEnv*, jobject, jlong ptr) {
-    return reinterpret_cast<OboeEngine*>(ptr)->getMonBitDepth();
+JNIEXPORT jint JNICALL
+Java_com_example_stagemon_MainActivity_getMonBitDepth(JNIEnv *, jobject, jlong ptr) {
+    return reinterpret_cast<OboeEngine *>(ptr)->getMonBitDepth();
 }
 
 JNIEXPORT void JNICALL Java_com_example_stagemon_MainActivity_setTrackDataInfo(
-        JNIEnv*, jobject, jlong ptr,
+        JNIEnv *, jobject, jlong ptr,
         jlong fohDataOffset, jint fohBlockAlign,
         jlong monDataOffset, jint monBlockAlign) {
-    auto* engine = reinterpret_cast<OboeEngine*>(ptr);
-    if (engine) engine->setTrackDataInfo(fohDataOffset, fohBlockAlign, monDataOffset, monBlockAlign);
+    auto *engine = reinterpret_cast<OboeEngine *>(ptr);
+    if (engine)
+        engine->setTrackDataInfo(fohDataOffset, fohBlockAlign, monDataOffset, monBlockAlign);
 }
 
 JNIEXPORT void JNICALL Java_com_example_stagemon_MainActivity_setTrackFdsSeek(
-        JNIEnv*, jobject, jlong ptr, jint fohFd, jlong fohDataLength, jint monFd, jlong monDataLength) {
-    auto* engine = reinterpret_cast<OboeEngine*>(ptr);
+        JNIEnv *, jobject, jlong ptr, jint fohFd, jlong fohDataLength, jint monFd,
+        jlong monDataLength) {
+    auto *engine = reinterpret_cast<OboeEngine *>(ptr);
     if (engine) engine->setTrackFdsSeek(fohFd, fohDataLength, monFd, monDataLength);
 }
 
 
-JNIEXPORT void JNICALL Java_com_example_stagemon_MainActivity_seekFd(JNIEnv*, jobject, jint fd, jlong position) {
-    off_t result = lseek(fd, (off_t)position, SEEK_SET);
+JNIEXPORT void JNICALL
+Java_com_example_stagemon_MainActivity_seekFd(JNIEnv *, jobject, jint fd, jlong position) {
+    off_t result = lseek(fd, (off_t) position, SEEK_SET);
     off_t current = lseek(fd, 0, SEEK_CUR);
-    LOGD("seekFd fd=%d request=%lld result=%lld current=%lld", fd, (long long)position, (long long)result, (long long)current);
+    LOGD("seekFd fd=%d request=%lld result=%lld current=%lld", fd, (long long) position,
+         (long long) result, (long long) current);
 }
 
 JNIEXPORT void JNICALL Java_com_example_stagemon_MainActivity_setTrackParams(
-        JNIEnv*, jobject, jlong ptr, jint fohSr, jint fohBps, jint fohFmt, jint monSr, jint monBps, jint monFmt) {
-    auto* engine = reinterpret_cast<OboeEngine*>(ptr);
+        JNIEnv *, jobject, jlong ptr, jint fohSr, jint fohBps, jint fohFmt, jint monSr, jint monBps,
+        jint monFmt) {
+    auto *engine = reinterpret_cast<OboeEngine *>(ptr);
     if (engine) {
         engine->mFohSampleRate = fohSr;
         engine->mFohBitsPerSample = fohBps;
@@ -1019,6 +1123,13 @@ JNIEXPORT void JNICALL Java_com_example_stagemon_MainActivity_setTrackParams(
         LOGD("setTrackParams: FOH sr=%d bps=%d fmt=%d, MON sr=%d bps=%d fmt=%d",
              fohSr, fohBps, fohFmt, monSr, monBps, monFmt);
     }
+}
+
+JNIEXPORT void JNICALL
+Java_com_example_stagemon_MainActivity_setPlaybackSpeed(JNIEnv *, jobject, jlong ptr,
+                                                        jfloat speed) {
+    auto *engine = reinterpret_cast<OboeEngine *>(ptr);
+    if (engine) engine->setPlaybackSpeed(speed);
 }
 
 }

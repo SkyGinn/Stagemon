@@ -1,0 +1,16 @@
+# ninja log v5
+1	11	0	clean	f4369589d5a883b4
+2	4191	7865835806213230	CMakeFiles/stagemon.dir/audio_engine.cpp.o	882e15c77f003db1
+4209	5037	7865835814480953	C:/Users/User/AndroidStudioProjects/Stagemon/app/build/intermediates/cxx/Debug/6k3q6i2a/obj/arm64-v8a/libstagemon.so	604fd1d4ca82fbe7
+10	2136	7865891830957327	CMakeFiles/stagemon.dir/audio_engine.cpp.o	882e15c77f003db1
+2137	2341	7865891833085940	C:/Users/User/AndroidStudioProjects/Stagemon/app/build/intermediates/cxx/Debug/6k3q6i2a/obj/arm64-v8a/libstagemon.so	604fd1d4ca82fbe7
+12	1950	7865916769024272	CMakeFiles/stagemon.dir/audio_engine.cpp.o	882e15c77f003db1
+1951	2068	7865916770294264	C:/Users/User/AndroidStudioProjects/Stagemon/app/build/intermediates/cxx/Debug/6k3q6i2a/obj/arm64-v8a/libstagemon.so	604fd1d4ca82fbe7
+14	2011	7865918658386238	CMakeFiles/stagemon.dir/audio_engine.cpp.o	882e15c77f003db1
+2012	2122	7865918659572380	C:/Users/User/AndroidStudioProjects/Stagemon/app/build/intermediates/cxx/Debug/6k3q6i2a/obj/arm64-v8a/libstagemon.so	604fd1d4ca82fbe7
+25	2400	7866237873296783	CMakeFiles/stagemon.dir/audio_engine.cpp.o	882e15c77f003db1
+2401	2526	7866237874639697	C:/Users/User/AndroidStudioProjects/Stagemon/app/build/intermediates/cxx/Debug/6k3q6i2a/obj/arm64-v8a/libstagemon.so	604fd1d4ca82fbe7
+18	2696	7866240002242397	CMakeFiles/stagemon.dir/audio_engine.cpp.o	882e15c77f003db1
+2697	2818	7866240003549495	C:/Users/User/AndroidStudioProjects/Stagemon/app/build/intermediates/cxx/Debug/6k3q6i2a/obj/arm64-v8a/libstagemon.so	604fd1d4ca82fbe7
+12	3203	7866248749868401	CMakeFiles/stagemon.dir/audio_engine.cpp.o	882e15c77f003db1
+3204	3462	7866248752134822	C:/Users/User/AndroidStudioProjects/Stagemon/app/build/intermediates/cxx/Debug/6k3q6i2a/obj/arm64-v8a/libstagemon.so	604fd1d4ca82fbe7

@@ -1,0 +1,10 @@
+# ninja log v5
+1	2761	7925993870387384	CMakeFiles/testoboe.dir/oboe_engine.cpp.o	2b97b9ce6649a119
+2778	3337	7925993876114865	C:/Users/User/AndroidStudioProjects/Stagemon/app/build/intermediates/cxx/Debug/3y2ohn1t/obj/x86/libtestoboe.so	b8d628ae90226c02
+1	2446	7926164047515356	CMakeFiles/stagemon.dir/oboe_engine.cpp.o	fa9d8d76ef8a966c
+2447	2646	7926164049483750	C:/Users/User/AndroidStudioProjects/Stagemon/app/build/intermediates/cxx/Debug/3y2ohn1t/obj/x86/libstagemon.so	e2bf8f04e4502374
+8	2185	7928079651024479	CMakeFiles/stagemon.dir/oboe_engine.cpp.o	fa9d8d76ef8a966c
+2186	2329	7928079652504537	C:/Users/User/AndroidStudioProjects/Stagemon/app/build/intermediates/cxx/Debug/3y2ohn1t/obj/x86/libstagemon.so	e2bf8f04e4502374
+10	2146	7930333501788009	CMakeFiles/stagemon.dir/oboe_engine.cpp.o	fa9d8d76ef8a966c
+2147	2294	7930333503306488	C:/Users/User/AndroidStudioProjects/Stagemon/app/build/intermediates/cxx/Debug/3y2ohn1t/obj/x86/libstagemon.so	e2bf8f04e4502374
+0	13	0	clean	c43cb551db0bac3b

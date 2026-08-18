@@ -1,0 +1,22 @@
+                        -HC:\Users\User\AndroidStudioProjects\Stagemon\app\src\main\cpp
+-DCMAKE_SYSTEM_NAME=Android
+-DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+-DCMAKE_SYSTEM_VERSION=31
+-DANDROID_PLATFORM=android-31
+-DANDROID_ABI=x86
+-DCMAKE_ANDROID_ARCH_ABI=x86
+-DANDROID_NDK=G:\Android\Sdk\ndk\29.0.14206865
+-DCMAKE_ANDROID_NDK=G:\Android\Sdk\ndk\29.0.14206865
+-DCMAKE_TOOLCHAIN_FILE=G:\Android\Sdk\ndk\29.0.14206865\build\cmake\android.toolchain.cmake
+-DCMAKE_MAKE_PROGRAM=G:\Android\Sdk\cmake\3.22.1\bin\ninja.exe
+-DCMAKE_CXX_FLAGS=-std=c++17
+-DCMAKE_LIBRARY_OUTPUT_DIRECTORY=C:\Users\User\AndroidStudioProjects\Stagemon\app\build\intermediates\cxx\RelWithDebInfo\3n5p2452\obj\x86
+-DCMAKE_RUNTIME_OUTPUT_DIRECTORY=C:\Users\User\AndroidStudioProjects\Stagemon\app\build\intermediates\cxx\RelWithDebInfo\3n5p2452\obj\x86
+-DCMAKE_BUILD_TYPE=RelWithDebInfo
+-DCMAKE_FIND_ROOT_PATH=C:\Users\User\AndroidStudioProjects\Stagemon\app\.cxx\RelWithDebInfo\3n5p2452\prefab\x86\prefab
+-BC:\Users\User\AndroidStudioProjects\Stagemon\app\.cxx\RelWithDebInfo\3n5p2452\x86
+-GNinja
+-DANDROID_STL=c++_shared
+-DANDROID_SUPPORT_FLEXIBLE_PAGE_SIZES=ON
+                        Build command args: []
+                        Version: 2
