@@ -100,6 +100,7 @@ private:
     int64_t mSeekPosition = 0;
     std::atomic<bool> mSeekInProgress{false};
     int mSeekFadeFrames = 0;
+    std::atomic<bool> mScratchActive{false};
     bool mSwapPairs = false;
     float mVolFoh = 1.0f;
     float mVolMon = 1.0f;
